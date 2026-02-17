@@ -1,0 +1,27 @@
+---
+inclusion: always
+---
+# Technology Versions - AgenticDriverAcademy
+
+## Backend
+java: "17"
+spring-boot: "3.4.x"
+spring-security: "6.x"
+maven: "3.9+"
+
+## Frontend  
+angular: "17+"
+typescript: "5.0+"
+angular-material: "17+"
+node: "18+"
+npm: "9+"
+
+## Database
+postgresql: "15"
+flyway: "9.x"
+h2: "2.x"  # Local development only
+
+## Testing
+junit: "5.x"
+mockito: "5.x"
+vitest: "latest"
