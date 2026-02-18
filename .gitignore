@@ -19,6 +19,14 @@ mvnw.cmd
 .DS_Store
 Thumbs.db
 
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+.env
+.env.local
+
 # Logs
 *.log
 

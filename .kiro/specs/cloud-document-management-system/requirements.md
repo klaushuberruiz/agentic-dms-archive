@@ -54,6 +54,10 @@ The system follows established architectural patterns:
 - **Traceability_Annotation**: Code comment referencing implemented requirement IDs
 - **Recency_Boost**: Search ranking factor prioritizing recently approved requirements
 - **Retrieval_Audit**: Log of requirement retrieval events for compliance tracking
+- **Optimistic_Locking**: Concurrency control using entity_version column to detect conflicting updates
+- **Content_Hash**: SHA-256 hash of document binary for integrity verification
+- **Dead_Letter**: Outbox event that exceeded maximum retry attempts and requires manual intervention
+- **TSVECTOR**: PostgreSQL full-text search data type for indexed text content
 
 ## Requirements
 
@@ -562,3 +566,52 @@ The system follows established architectural patterns:
 13. THE DMS SHALL support index partitioning by tenant for multi-tenant isolation and performance
 14. THE DMS SHALL implement token counting safeguards to prevent context injection exceeding model limits (default 8000 tokens)
 15. THE DMS SHALL provide metrics for hybrid search performance: query latency, index size, embedding generation time, and cache hit rate
+
+### Requirement 26: Data Integrity and Optimistic Locking
+
+**User Story:** As a developer, I want the system to prevent concurrent update conflicts and verify document integrity, so that data remains consistent under concurrent access.
+
+#### Acceptance Criteria
+
+1. THE DMS SHALL use optimistic locking (`entity_version` column) on all mutable entities (documents, document_types, groups, legal_holds) to detect concurrent modification conflicts
+2. IF a concurrent modification conflict is detected, THEN THE DMS SHALL reject the update with HTTP 409 Conflict and a descriptive error message
+3. THE DMS SHALL compute and store a SHA-256 content hash (`content_hash`) for each uploaded document and each document version
+4. WHEN a document is downloaded, THE DMS SHALL optionally verify the content hash against the stored value to detect corruption
+5. THE DMS SHALL store the content hash per version in the `document_versions` table for per-version integrity verification
+6. THE DMS SHALL expose the content hash in document metadata responses for client-side verification
+
+### Requirement 27: Document Type Lifecycle Management
+
+**User Story:** As an administrator, I want to deactivate document types and manage display names, so that I can control the document type catalog without losing historical data.
+
+#### Acceptance Criteria
+
+1. THE DMS SHALL support an `active` flag on document types to allow deactivation without deletion
+2. WHEN a document type is deactivated, THE DMS SHALL prevent new document uploads for that type while preserving existing documents
+3. THE DMS SHALL support a `display_name` field on document types for user-friendly labels in the GUI
+4. THE DMS SHALL support a `display_name` field on groups for user-friendly labels in the GUI
+5. WHEN a document type is deactivated or reactivated, THE DMS SHALL record the change in the audit log
+6. THE DMS SHALL support filtering document types by active status in admin views
+
+### Requirement 28: Full-Text Search Infrastructure
+
+**User Story:** As a developer, I want the full-text search index to be automatically maintained, so that search results are always up to date without manual intervention.
+
+#### Acceptance Criteria
+
+1. THE DMS SHALL maintain a `metadata_tsv` TSVECTOR column on the documents table, automatically populated via database trigger on INSERT or UPDATE of the metadata column
+2. THE DMS SHALL create a GIN index on the `metadata_tsv` column for performant full-text search queries
+3. THE DMS SHALL use the English text search configuration for tsvector generation by default (configurable per tenant)
+4. WHEN metadata is updated, THE DMS SHALL automatically regenerate the tsvector column via the database trigger (no application-level intervention required)
+
+### Requirement 29: Search Index Outbox Resilience
+
+**User Story:** As an operations engineer, I want the search index synchronization to be resilient to failures, so that no index updates are lost and failed events are properly tracked.
+
+#### Acceptance Criteria
+
+1. THE DMS SHALL track a `max_retries` limit (default 5) per outbox event to cap retry attempts
+2. THE DMS SHALL compute and store a `next_retry_at` timestamp using exponential backoff for failed outbox events
+3. WHEN an outbox event exceeds `max_retries`, THE DMS SHALL mark it as dead-lettered (`dead_lettered = TRUE`) and stop retrying
+4. THE DMS SHALL provide an admin endpoint to list and replay dead-lettered outbox events
+5. THE DMS SHALL track `entity_type` on outbox events to support future entity types beyond requirement chunks
