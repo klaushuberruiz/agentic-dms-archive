@@ -103,8 +103,8 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Test null handling and edge cases
     - _Requirements: 21.1_
 
-- [ ] 3. Exception handling and error responses
-  - [ ] 3.1 Create exception hierarchy
+- [x] 3. Exception handling and error responses
+  - [x] 3.1 Create exception hierarchy
     - DmsException base class with errorCode and httpStatus
     - DocumentNotFoundException, UnauthorizedAccessException, ValidationException
     - LegalHoldActiveException, RetentionNotExpiredException, RateLimitExceededException
@@ -112,34 +112,34 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - SearchIndexUnavailableException, EmbeddingGenerationException
     - ConcurrentModificationException (HTTP 409 for optimistic locking conflicts)
     - _Requirements: 1.4, 3.2, 6.6, 7.2, 23.5, 26.2_
-  - [ ] 3.2 Create GlobalExceptionHandler (@RestControllerAdvice)
+  - [x] 3.2 Create GlobalExceptionHandler (@RestControllerAdvice)
     - Handle all DmsException subtypes with proper HTTP status codes
     - Return ErrorResponse with errorCode, message, timestamp, correlationId, fieldErrors
     - Do not reveal document existence on 403 responses
     - _Requirements: 1.4, 3.2, 23.6_
 
 - [ ] 4. Security and multi-tenancy foundation
-  - [ ] 4.1 Implement SecurityConfig
+  - [x] 4.1 Implement SecurityConfig
     - Configure JWT authentication with Azure AD
     - Set up CORS with explicit allowed origins
     - Configure Content Security Policy headers
     - Set up method-level security with @PreAuthorize
     - _Requirements: 23.1, 23.4, 23.7, 23.8, 23.12_
-  - [ ] 4.2 Implement TenantContext service
+  - [x] 4.2 Implement TenantContext service
     - Extract tenant_id from JWT claims
     - Provide tenant_id to repository queries
     - Default tenant fallback for single-tenant mode
     - _Requirements: 20.2, 20.3, 20.7_
-  - [ ] 4.3 Implement AuthorizationService
+  - [x] 4.3 Implement AuthorizationService
     - Verify user group membership for document access
     - Check document type allowed groups
     - Support hierarchical group inheritance
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.7_
-  - [ ] 4.4 Implement rate limiting filter
+  - [x] 4.4 Implement rate limiting filter
     - Per-user/tenant rate limiting (configurable, default 100 req/min)
     - Return HTTP 429 with Retry-After header
     - _Requirements: 23.5_
-  - [ ]* 4.5 Write unit tests for AuthorizationService
+  - [x]* 4.5 Write unit tests for AuthorizationService
     - shouldGrantAccess_whenUserInAllowedGroup
     - shouldDenyAccess_whenUserNotInAnyAllowedGroup
     - shouldDenyAccess_whenTenantMismatch
