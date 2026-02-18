@@ -1,7 +1,9 @@
 package com.dms.exception;
 
-public class DocumentNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class DocumentNotFoundException extends DmsException {
     public DocumentNotFoundException(String message) {
-        super(message);
+        super("DOCUMENT_NOT_FOUND", HttpStatus.NOT_FOUND, message);
     }
 }
