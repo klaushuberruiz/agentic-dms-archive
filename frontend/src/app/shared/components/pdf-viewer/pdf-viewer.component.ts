@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-pdf-viewer',
   standalone: true,
-  template: `<div class="pdf-viewer"></div>`,
+  template: `<iframe class="pdf-viewer" [src]="src" title="PDF preview"></iframe>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PdfViewerComponent {
+  @Input() src = '';
 }

@@ -79,8 +79,8 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Create all indexes
     - _Requirements: 2A.6, 2B.1, 29.1, 29.2, 29.3, 29.5_
 
-- [ ] 2. Domain entities, DTOs, and mappers
-  - [ ] 2.1 Create JPA domain entities
+- [x] 2. Domain entities, DTOs, and mappers
+  - [x] 2.1 Create JPA domain entities
     - Document, DocumentVersion, DocumentType, AuditLog, Group, UserGroup, LegalHold
     - Use Hypersistence Utils JsonType for JSONB mapping
     - Include tenant_id on all entities, soft-delete fields on Document
@@ -90,15 +90,15 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Include displayName and active flag on DocumentType
     - Include displayName, modifiedAt, modifiedBy on Group
     - _Requirements: 1.1, 1.2, 1.10, 6.3, 20.1, 21.9, 26.1, 26.3, 26.5, 27.1, 27.3, 27.4_
-  - [ ] 2.2 Create request/response DTOs
+  - [x] 2.2 Create request/response DTOs
     - DocumentUploadRequest, MetadataUpdateRequest, SearchRequest, LegalHoldRequest
     - DocumentResponse, SearchResultResponse, VersionHistoryResponse, AuditLogResponse
     - Use @Data, @Builder (Lombok), @Valid annotations
     - _Requirements: 21.9_
-  - [ ] 2.3 Create mapper classes
+  - [x] 2.3 Create mapper classes
     - DocumentMapper, AuditLogMapper, GroupMapper (entity ↔ DTO)
     - _Requirements: 21.9_
-  - [ ]* 2.4 Write unit tests for mappers
+  - [x]* 2.4 Write unit tests for mappers
     - Test entity-to-DTO and DTO-to-entity conversions
     - Test null handling and edge cases
     - _Requirements: 21.1_
@@ -118,7 +118,7 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Do not reveal document existence on 403 responses
     - _Requirements: 1.4, 3.2, 23.6_
 
-- [ ] 4. Security and multi-tenancy foundation
+- [x] 4. Security and multi-tenancy foundation
   - [x] 4.1 Implement SecurityConfig
     - Configure JWT authentication with Azure AD
     - Set up CORS with explicit allowed origins
@@ -144,45 +144,45 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - shouldDenyAccess_whenUserNotInAnyAllowedGroup
     - shouldDenyAccess_whenTenantMismatch
     - _Requirements: 15.3, 20.4, 21.1_
-  - [ ]* 4.6 Write property test for tenant isolation
+  - [x]* 4.6 Write property test for tenant isolation
     - **Property 20: Tenant Isolation**
     - *For any* query, results must only contain documents matching the current tenant_id
     - **Validates: Requirements 20.2, 20.4**
-  - [ ]* 4.7 Write property test for RBAC enforcement
+  - [x]* 4.7 Write property test for RBAC enforcement
     - **Property 10: Authorization Enforcement**
     - *For any* document access request, unauthorized users must receive HTTP 403
     - **Validates: Requirements 3.1, 3.2, 15.3, 20.4**
-  - [ ]* 4.8 Write property test for rate limiting
+  - [x]* 4.8 Write property test for rate limiting
     - **Property 21: Rate Limiting Enforcement**
     - *For any* user exceeding rate limit, subsequent requests must receive HTTP 429
     - **Validates: Requirements 23.5**
 
-- [ ] 5. Checkpoint - Foundation layers
+- [x] 5. Checkpoint - Foundation layers
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Repositories and data access layer
-  - [ ] 6.1 Implement DocumentRepository
+- [x] 6. Repositories and data access layer
+  - [x] 6.1 Implement DocumentRepository
     - findByIdAndTenantId, findAllByTenantId, findByMetadataField (JSONB query)
     - Full-text search using tsvector on metadata
     - Soft-delete aware queries (WHERE deleted_at IS NULL)
     - Pagination support with Spring Data Pageable
     - _Requirements: 2.1, 2.2, 2.3, 2.7, 2.8, 2.9, 2.10_
-  - [ ] 6.2 Implement remaining repositories
+  - [x] 6.2 Implement remaining repositories
     - DocumentTypeRepository, AuditLogRepository, GroupRepository, UserGroupRepository, LegalHoldRepository
     - All queries filtered by tenant_id
     - AuditLogRepository: query by document, user, action type, date range
     - _Requirements: 9.7, 10.5, 16.1, 20.2_
-  - [ ]* 6.3 Write integration tests for DocumentRepository (@DataJpaTest)
+  - [x]* 6.3 Write integration tests for DocumentRepository (@DataJpaTest)
     - shouldFilterByTenantId, shouldQueryJsonbMetadata, shouldExcludeSoftDeleted
     - shouldPaginateResults, shouldSearchFullText
     - _Requirements: 2.1, 2.7, 20.2, 21.5_
 
-- [ ] 7. Azure Blob Storage integration
-  - [ ] 7.1 Implement BlobStorageConfig
+- [x] 7. Azure Blob Storage integration
+  - [x] 7.1 Implement BlobStorageConfig
     - Configure BlobServiceClient with Azure Key Vault credentials
     - Configure circuit breaker for Blob Storage connectivity
     - _Requirements: 23.2, 3.7_
-  - [ ] 7.2 Implement BlobStorageService
+  - [x] 7.2 Implement BlobStorageService
     - uploadBlob: store PDF with hierarchical naming pattern {tenant_id}/{document_type}/{year}/{month}/{document_id}_v{version}.pdf
     - Compute SHA-256 content hash during upload and store on document/version
     - downloadBlob: stream PDF with circuit breaker, generate time-limited SAS tokens
@@ -191,53 +191,53 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Validate PDF magic bytes (%PDF-) before upload
     - Enforce 100MB max file size
     - _Requirements: 1.6, 1.8, 1.9, 3.3, 3.7, 23.13, 26.3, 26.4_
-  - [ ]* 7.3 Write unit tests for BlobStorageService
+  - [x]* 7.3 Write unit tests for BlobStorageService
     - shouldGenerateCorrectBlobPath, shouldRejectNonPdfFiles, shouldRejectOversizedFiles
     - shouldRetryOnFailure, shouldOpenCircuitOnPersistentFailure
     - _Requirements: 1.6, 1.8, 1.9, 3.7, 21.1_
-  - [ ]* 7.4 Write property test for PDF format validation
+  - [x]* 7.4 Write property test for PDF format validation
     - **Property 4: PDF Format Validation**
     - *For any* file with PDF magic bytes, validation passes; for any file without, validation fails
     - **Validates: Requirements 1.9**
 
-- [ ] 8. Audit logging service
-  - [ ] 8.1 Implement AuditService
+- [x] 8. Audit logging service
+  - [x] 8.1 Implement AuditService
     - Log document actions: view, download, preview, upload, update, delete (soft/hard)
     - Include user, tenant_id, timestamp (UTC), document ID, client IP, correlation ID
     - Log metadata changes with before/after JSON diff
     - Log authentication events (login, logout, failed attempts)
     - Append-only enforcement (no update/delete operations)
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.9, 9.10_
-  - [ ]* 8.2 Write unit tests for AuditService
+  - [x]* 8.2 Write unit tests for AuditService
     - shouldLogViewAction_whenDocumentViewed
     - shouldIncludeJsonDiff_whenMetadataUpdated
     - shouldIncludeCorrelationId_inAllEntries
     - _Requirements: 9.1, 9.3, 9.9, 21.1_
-  - [ ]* 8.3 Write property test for audit log metadata diff
+  - [x]* 8.3 Write property test for audit log metadata diff
     - **Property 11: Audit Log Metadata Diff**
     - *For any* metadata update, the audit log must contain accurate before/after JSON diff
     - **Validates: Requirements 4.3**
 
-- [ ] 9. Metadata validation service
-  - [ ] 9.1 Implement MetadataValidationService
+- [x] 9. Metadata validation service
+  - [x] 9.1 Implement MetadataValidationService
     - Validate metadata against document type's JSON Schema (draft-07+)
     - Return field-level error details on validation failure
     - Support schema evolution (existing docs remain valid on read)
     - _Requirements: 1.3, 1.4, 4.1, 4.2, 14.1, 14.2, 14.3, 14.4, 14.5, 14.6_
-  - [ ]* 9.2 Write property test for metadata schema validation
+  - [x]* 9.2 Write property test for metadata schema validation
     - **Property 3: Metadata Schema Validation**
     - *For any* metadata conforming to schema, validation succeeds; for non-conforming, it fails with errors
     - **Validates: Requirements 1.3, 1.4, 4.1, 14.2, 14.4**
-  - [ ]* 9.3 Write property test for schema evolution
+  - [x]* 9.3 Write property test for schema evolution
     - **Property 19: Schema Evolution Non-Breaking**
     - *For any* schema update, previously valid documents must remain retrievable without errors
     - **Validates: Requirements 14.6**
 
-- [ ] 10. Checkpoint - Core services
+- [x] 10. Checkpoint - Core services
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Document upload service and controller
-  - [ ] 11.1 Implement DocumentService.uploadDocument
+- [x] 11. Document upload service and controller
+  - [x] 11.1 Implement DocumentService.uploadDocument
     - Validate authorization (user group membership for document type)
     - Validate document type is active (reject uploads to deactivated types)
     - Validate PDF format (magic bytes) and file size (max 100MB)
@@ -250,39 +250,39 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Cleanup orphaned blob if metadata write fails
     - Log upload action in audit log
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 26.3, 27.2_
-  - [ ] 11.2 Implement DocumentController upload endpoint
+  - [x] 11.2 Implement DocumentController upload endpoint
     - POST /api/v1/documents with multipart file + metadata
     - @Valid on request body, @PreAuthorize for authorization
     - Return ResponseEntity with document ID, version, storage location
     - _Requirements: 1.1, 1.5_
-  - [ ]* 11.3 Write unit tests for DocumentService.uploadDocument
+  - [x]* 11.3 Write unit tests for DocumentService.uploadDocument
     - shouldUploadDocument_whenMetadataIsValid
     - shouldRejectUpload_whenUserNotAuthorized
     - shouldRejectUpload_whenMetadataInvalid
     - shouldCleanupBlob_whenMetadataWriteFails
     - shouldReturnSameId_whenIdempotencyKeyReused
     - _Requirements: 1.1, 1.4, 1.7, 1.10, 1.11, 21.1_
-  - [ ]* 11.4 Write property test for upload atomicity
+  - [x]* 11.4 Write property test for upload atomicity
     - **Property 1: Upload Atomicity**
     - *For any* upload, success means both blob and metadata exist; failure means neither exists
     - **Validates: Requirements 1.1, 1.11**
 
-  - [ ]* 11.5 Write property test for system-assigned fields
+  - [x]* 11.5 Write property test for system-assigned fields
     - **Property 2: System-Assigned Fields Population**
     - *For any* successful upload, documentType, createdBy, createdAt, tenant_id, allowedGroups must be non-null
     - **Validates: Requirements 1.2**
-  - [ ]* 11.6 Write property test for idempotent upload
+  - [x]* 11.6 Write property test for idempotent upload
     - **Property 5: Idempotent Upload**
     - *For any* upload with same idempotency key, repeated submissions return same document ID without duplicates
     - **Validates: Requirements 1.10**
-  - [ ]* 11.7 Write controller integration test (@WebMvcTest)
+  - [x]* 11.7 Write controller integration test (@WebMvcTest)
     - shouldReturn201_whenUploadSucceeds
     - shouldReturn400_whenMetadataInvalid
     - shouldReturn403_whenNotAuthorized
     - _Requirements: 1.1, 1.4, 1.7, 21.4_
 
-- [ ] 12. Document search service and controller
-  - [ ] 12.1 Implement SearchService
+- [x] 12. Document search service and controller
+  - [x] 12.1 Implement SearchService
     - Search by documentType, metadata fields (JSONB GIN), date range
     - Filter by RBAC (user group membership) and tenant_id
     - Exclude soft-deleted documents by default (configurable)
@@ -290,70 +290,70 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Full-text search on metadata using tsvector
     - Return total count and pagination metadata
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.7, 2.8, 2.10, 2.11_
-  - [ ] 12.2 Implement SearchController
+  - [x] 12.2 Implement SearchController
     - POST /api/v1/search with SearchRequest body
     - Return SearchResultResponse with pagination metadata
     - _Requirements: 2.5, 2.8, 2.11_
-  - [ ]* 12.3 Write unit tests for SearchService
+  - [x]* 12.3 Write unit tests for SearchService
     - shouldFilterByDocumentType_whenTypeSpecified
     - shouldFilterByTenant_always
     - shouldExcludeSoftDeleted_byDefault
     - shouldPaginate_withCorrectMetadata
     - _Requirements: 2.1, 2.4, 2.7, 2.8, 21.1_
-  - [ ]* 12.4 Write property test for search tenant and type filtering
+  - [x]* 12.4 Write property test for search tenant and type filtering
     - **Property 6: Search Result Tenant and Type Filtering**
     - *For any* search with document type, all results match that type AND the user's tenant
     - **Validates: Requirements 2.1, 20.2**
-  - [ ]* 12.5 Write property test for RBAC search filtering
+  - [x]* 12.5 Write property test for RBAC search filtering
     - **Property 7: RBAC Search Filtering**
     - *For any* search, all results have at least one allowed group matching the user's groups
     - **Validates: Requirements 2.4, 15.4**
 
-  - [ ]* 12.6 Write property test for soft-deleted document exclusion
+  - [x]* 12.6 Write property test for soft-deleted document exclusion
     - **Property 8: Soft-Deleted Document Exclusion**
     - *For any* default search, no results should have a non-null deleted_at
     - **Validates: Requirements 2.7**
-  - [ ]* 12.7 Write property test for pagination metadata consistency
+  - [x]* 12.7 Write property test for pagination metadata consistency
     - **Property 9: Pagination Metadata Consistency**
     - *For any* search response, totalPages == ceil(totalCount / pageSize) and page is in valid range
     - **Validates: Requirements 2.11**
 
-- [ ] 13. Document download and preview
-  - [ ] 13.1 Implement DocumentService download and preview methods
+- [x] 13. Document download and preview
+  - [x] 13.1 Implement DocumentService download and preview methods
     - Verify authorization and tenant before streaming
     - Generate time-limited SAS tokens for blob access
     - Log download/preview actions in audit log before streaming
     - Support HTTP Range requests for partial content (resumable downloads)
     - Set Content-Disposition headers for browser download behavior
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 12.1, 12.2, 12.3, 12.4, 12.5_
-  - [ ] 13.2 Implement DocumentController download/preview endpoints
+  - [x] 13.2 Implement DocumentController download/preview endpoints
     - GET /api/v1/documents/{id}/download and GET /api/v1/documents/{id}/preview
     - _Requirements: 3.1, 12.1_
-  - [ ]* 13.3 Write unit tests for download/preview
+  - [x]* 13.3 Write unit tests for download/preview
     - shouldStreamPdf_whenAuthorized
     - shouldReturn403_whenNotAuthorized
     - shouldLogAction_beforeStreaming
     - shouldSupportRangeRequests
     - _Requirements: 3.1, 3.2, 3.4, 3.5, 21.1_
 
-- [ ] 14. Metadata update service
-  - [ ] 14.1 Implement DocumentService.updateMetadata
+- [x] 14. Metadata update service
+  - [x] 14.1 Implement DocumentService.updateMetadata
     - Validate metadata against document type JSON schema
     - Verify user authorization before allowing update
     - Update modifiedBy and modifiedAt fields
     - Log change in audit log with before/after JSON diff
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
-  - [ ] 14.2 Implement DocumentController metadata update endpoint
+  - [x] 14.2 Implement DocumentController metadata update endpoint
     - PUT /api/v1/documents/{id}/metadata with @Valid MetadataUpdateRequest
     - _Requirements: 4.1_
-  - [ ]* 14.3 Write unit tests for metadata update
+  - [x]* 14.3 Write unit tests for metadata update
     - shouldUpdateMetadata_whenSchemaValid
     - shouldRejectUpdate_whenSchemaInvalid
     - shouldLogBeforeAfterDiff_whenMetadataUpdated
     - _Requirements: 4.1, 4.2, 4.3, 21.1_
 
-- [ ] 15. Document versioning service
-  - [ ] 15.1 Implement VersioningService
+- [x] 15. Document versioning service
+  - [x] 15.1 Implement VersioningService
     - Upload new version: store new blob, increment version atomically
     - Maintain complete version history with immutable previous versions
     - Retrieve specific version by version number
@@ -362,58 +362,58 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Log version creation in audit log with previous version reference
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9_
 
-  - [ ] 15.2 Implement DocumentController versioning endpoints
+  - [x] 15.2 Implement DocumentController versioning endpoints
     - POST /api/v1/documents/{id}/versions (upload new version)
     - GET /api/v1/documents/{id}/versions (list version history)
     - GET /api/v1/documents/{id}/versions/{version} (get specific version)
     - POST /api/v1/documents/{id}/restore (restore previous version)
     - _Requirements: 5.1, 5.3, 5.4, 5.6_
-  - [ ]* 15.3 Write unit tests for VersioningService
+  - [x]* 15.3 Write unit tests for VersioningService
     - shouldIncrementVersion_whenNewVersionUploaded
     - shouldPreserveHistory_whenNewVersionCreated
     - shouldCreateNewVersion_whenRestoringPrevious
     - _Requirements: 5.1, 5.2, 5.4, 21.1_
-  - [ ]* 15.4 Write property test for version number sequential increment
+  - [x]* 15.4 Write property test for version number sequential increment
     - **Property 12: Version Number Sequential Increment**
     - *For any* new version upload, version number == previous + 1, atomic with no gaps
     - **Validates: Requirements 5.1**
-  - [ ]* 15.5 Write property test for version immutability
+  - [x]* 15.5 Write property test for version immutability
     - **Property 13: Version Immutability**
     - *For any* document with multiple versions, uploading/restoring must not modify existing version blobs
     - **Validates: Requirements 5.2**
-  - [ ]* 15.6 Write property test for version restore
+  - [x]* 15.6 Write property test for version restore
     - **Property 14: Version Restore Creates New Version**
     - *For any* restore, result is a new incremented version with previous version's content
     - **Validates: Requirements 5.4**
 
-- [ ] 16. Checkpoint - Core document operations
+- [x] 16. Checkpoint - Core document operations
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 17. Soft delete and restore
-  - [ ] 17.1 Implement DocumentService soft delete and restore
+- [x] 17. Soft delete and restore
+  - [x] 17.1 Implement DocumentService soft delete and restore
     - Soft delete: set deleted_at/deleted_by/delete_reason, verify no active legal hold
     - Restore: clear deleted_at/deleted_by/delete_reason within configurable recovery window (default 30 days)
     - Mark eligible for hard deletion when recovery window exceeded
     - Admin endpoint to list soft-deleted documents within tenant
     - Log actions in audit log (include delete_reason)
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8_
-  - [ ] 17.2 Implement DocumentController soft delete/restore endpoints
+  - [x] 17.2 Implement DocumentController soft delete/restore endpoints
     - DELETE /api/v1/documents/{id} (soft delete)
     - POST /api/v1/documents/{id}/restore
     - _Requirements: 6.1, 6.4_
-  - [ ]* 17.3 Write unit tests for soft delete/restore
+  - [x]* 17.3 Write unit tests for soft delete/restore
     - shouldSoftDelete_whenNoLegalHold
     - shouldRejectSoftDelete_whenLegalHoldActive
     - shouldRestore_whenWithinRecoveryWindow
     - shouldRejectRestore_whenRecoveryWindowExceeded
     - _Requirements: 6.1, 6.4, 6.6, 21.1_
-  - [ ]* 17.4 Write property test for soft delete preserves data
+  - [x]* 17.4 Write property test for soft delete preserves data
     - **Property 15: Soft Delete Preserves Data**
     - *For any* soft delete, blob and metadata remain intact, only deleted_at/deleted_by are set
     - **Validates: Requirements 6.1**
 
-- [ ] 18. Hard delete and retention management
-  - [ ] 18.1 Implement hard delete in DocumentService
+- [x] 18. Hard delete and retention management
+  - [x] 18.1 Implement hard delete in DocumentService
     - Verify retention rules permit deletion (document age >= retention period)
     - Verify no active legal hold
     - Remove all version blobs from Azure Blob Storage
@@ -423,7 +423,7 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Support async bulk hard delete with status tracking
     - Retry blob deletion with exponential backoff
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9_
-  - [ ] 18.2 Implement RetentionService
+  - [x] 18.2 Implement RetentionService
     - Define retention periods per document type (days/months/years)
     - Scheduled job (configurable, default daily) to process retention-based deletions
     - Respect legal holds during automatic deletion
@@ -433,26 +433,26 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Warning window for approaching expiration (default 30 days)
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.10_
 
-  - [ ] 18.3 Implement AdminController hard delete endpoint
+  - [x] 18.3 Implement AdminController hard delete endpoint
     - DELETE /api/v1/documents/{id}/hard (admin only)
     - _Requirements: 7.6_
-  - [ ]* 18.4 Write unit tests for hard delete and retention
+  - [x]* 18.4 Write unit tests for hard delete and retention
     - shouldRejectHardDelete_whenRetentionNotExpired
     - shouldRejectHardDelete_whenLegalHoldActive
     - shouldDeleteAllVersionBlobs_whenHardDeletePermitted
     - shouldMarkForDeletion_whenRetentionExpired
     - _Requirements: 7.1, 7.2, 7.3, 8.2, 21.1_
-  - [ ]* 18.5 Write property test for legal hold blocks deletion
+  - [x]* 18.5 Write property test for legal hold blocks deletion
     - **Property 16: Legal Hold Blocks All Deletion**
     - *For any* document with active legal hold, all deletion operations must be rejected
     - **Validates: Requirements 6.6, 7.2, 8.3, 10.1, 10.8**
-  - [ ]* 18.6 Write property test for retention rule enforcement
+  - [x]* 18.6 Write property test for retention rule enforcement
     - **Property 17: Retention Rule Enforcement**
     - *For any* hard delete where document age < retention period, deletion must be rejected
     - **Validates: Requirements 7.1**
 
-- [ ] 19. Legal hold management
-  - [ ] 19.1 Implement LegalHoldService
+- [x] 19. Legal hold management
+  - [x] 19.1 Implement LegalHoldService
     - Place legal hold with case reference and reason
     - Release legal hold with reason
     - Support multiple concurrent holds on same document (different cases)
@@ -462,49 +462,49 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Log all hold actions in audit log
     - Restrict to legal_administrator role
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10_
-  - [ ] 19.2 Implement legal hold REST endpoints
+  - [x] 19.2 Implement legal hold REST endpoints
     - POST /api/v1/legal-holds (place hold)
     - DELETE /api/v1/legal-holds/{id} (release hold)
     - GET /api/v1/legal-holds (list active holds with case reference filter)
     - _Requirements: 10.1, 10.3, 10.5_
-  - [ ]* 19.3 Write unit tests for LegalHoldService
+  - [x]* 19.3 Write unit tests for LegalHoldService
     - shouldPlaceHold_whenAuthorized
     - shouldBlockDeletion_whenHoldActive
     - shouldAllowDeletion_whenAllHoldsReleased
     - shouldSupportMultipleConcurrentHolds
     - _Requirements: 10.1, 10.7, 10.8, 21.1_
-  - [ ]* 19.4 Write property test for multiple concurrent legal holds
+  - [x]* 19.4 Write property test for multiple concurrent legal holds
     - **Property 18: Multiple Concurrent Legal Holds**
     - *For any* document, multiple active holds with different case references can coexist independently
     - **Validates: Requirements 10.7**
 
-- [ ] 20. Group and document type administration
-  - [ ] 20.1 Implement GroupService
+- [x] 20. Group and document type administration
+  - [x] 20.1 Implement GroupService
     - Create/update groups with display_name, assign/remove users
     - Track modifiedAt/modifiedBy on group updates
     - Support optional hierarchical group structures
     - Prevent deletion of groups assigned to document types
     - Log membership changes in audit log
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 27.4_
-  - [ ] 20.2 Implement DocumentTypeService
+  - [x] 20.2 Implement DocumentTypeService
     - Create/update document types with JSON schema, allowed groups, retention policy
     - Support display_name and active flag management
     - Prevent uploads to deactivated document types
     - Prevent deletion of types with associated documents
     - Log changes in audit log (including activation/deactivation)
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 27.1, 27.2, 27.3, 27.5, 27.6_
-  - [ ] 20.3 Implement GroupController and DocumentTypeController
+  - [x] 20.3 Implement GroupController and DocumentTypeController
     - Group CRUD endpoints (admin only)
     - DocumentType CRUD endpoints (admin only)
     - _Requirements: 13.1, 16.1_
-  - [ ]* 20.4 Write unit tests for GroupService and DocumentTypeService
+  - [x]* 20.4 Write unit tests for GroupService and DocumentTypeService
     - shouldCreateGroup_whenAdmin
     - shouldPreventGroupDeletion_whenAssignedToDocumentType
     - shouldPreventTypeDeletion_whenDocumentsExist
     - _Requirements: 13.6, 16.6, 21.1_
 
-- [ ] 21. Bulk download
-  - [ ] 21.1 Implement bulk download in SearchService/DocumentService
+- [x] 21. Bulk download
+  - [x] 21.1 Implement bulk download in SearchService/DocumentService
     - Generate ZIP archive from selected documents
     - Verify authorization for each document individually
     - Exclude unauthorized documents and report exclusions
@@ -512,33 +512,33 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Limit max documents per bulk download
     - Stream ZIP generation for large archives
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
-  - [ ] 21.2 Implement SearchController bulk download endpoint
+  - [x] 21.2 Implement SearchController bulk download endpoint
     - POST /api/v1/search/bulk-download
     - _Requirements: 11.1_
-  - [ ]* 21.3 Write unit tests for bulk download
+  - [x]* 21.3 Write unit tests for bulk download
     - shouldGenerateZip_whenDocumentsAuthorized
     - shouldExcludeUnauthorized_andReportExclusions
     - shouldLimitMaxDocuments
     - _Requirements: 11.1, 11.3, 11.5, 21.1_
 
-- [ ] 22. Audit log querying and export
-  - [ ] 22.1 Implement AuditController
+- [x] 22. Audit log querying and export
+  - [x] 22.1 Implement AuditController
     - GET /api/v1/audit/documents/{id} (document access history)
     - GET /api/v1/audit/search (search audit logs by document, user, action, tenant, date range)
     - GET /api/v1/audit/export (export in CSV/JSON for compliance)
     - Restrict to admin/compliance roles
     - _Requirements: 9.7, 9.11, 17.1, 17.2, 17.3, 17.4, 17.5_
-  - [ ]* 22.2 Write unit tests for AuditController
+  - [x]* 22.2 Write unit tests for AuditController
     - shouldReturnAccessHistory_whenDocumentIdProvided
     - shouldFilterByDateRange_whenSpecified
     - shouldExportCsv_whenFormatRequested
     - _Requirements: 9.7, 9.11, 17.4, 21.1_
 
-- [ ] 23. Checkpoint - All backend core features
+- [x] 23. Checkpoint - All backend core features
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 24. Document parsing and chunking service
-  - [ ] 24.1 Implement ChunkingService
+- [x] 24. Document parsing and chunking service
+  - [x] 24.1 Implement ChunkingService
     - Parse Markdown documents and extract individual requirements
     - Parse PDF documents using Apache Tika for text extraction
     - Parse PowerPoint documents using Apache POI for slide text extraction
@@ -549,7 +549,7 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Re-parse and re-chunk on new version upload
     - Mark document as unparsed if parsing fails (don't block upload)
     - _Requirements: 2A.1, 2A.2, 2A.3, 2A.4, 2A.5, 2A.6, 2A.7, 2A.8, 2A.9, 2A.10_
-  - [ ]* 24.2 Write unit tests for ChunkingService
+  - [x]* 24.2 Write unit tests for ChunkingService
     - shouldExtractRequirements_fromMarkdown
     - shouldExtractText_fromPdf
     - shouldExtractText_fromPowerPoint
@@ -557,145 +557,145 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - shouldPreserveRequirementContext
     - shouldNotBlockUpload_whenParsingFails
     - _Requirements: 2A.1, 2A.2, 2A.3, 2A.4, 2A.5, 2A.7, 21.1_
-  - [ ]* 24.3 Write property test for chunk token limit enforcement
+  - [x]* 24.3 Write property test for chunk token limit enforcement
     - **Property 28: Chunk Token Limit Enforcement**
     - *For any* chunk produced, token count must not exceed 1000; for any context injection, total tokens must not exceed configured limit
     - **Validates: Requirements 2A.4, 2E.2, 25.14**
 
-- [ ] 25. Hybrid search indexing pipeline
-  - [ ] 25.1 Implement AzureSearchConfig and AzureSearchClient
+- [x] 25. Hybrid search indexing pipeline
+  - [x] 25.1 Implement AzureSearchConfig and AzureSearchClient
     - Configure Azure AI Search SDK client
     - Define index schema (keyword + vector fields, tenant_id, allowed_group_ids)
     - Support batch upload, delete by tenant, count by tenant
     - _Requirements: 2B.3, 2B.4, 2B.5_
-  - [ ] 25.2 Implement EmbeddingService
+  - [x] 25.2 Implement EmbeddingService
     - Generate embeddings via Azure OpenAI (text-embedding-ada-002 or later)
     - Support batch embedding generation (configurable batch size, default 100)
     - Retry with exponential backoff on rate limits
     - _Requirements: 2B.2, 25.6, 25.7_
-  - [ ] 25.3 Implement IndexingService
+  - [x] 25.3 Implement IndexingService
     - Orchestrate chunk → embed → index pipeline
     - Write outbox events transactionally with document/chunk writes
     - Support incremental index updates on metadata changes
     - _Requirements: 2B.1, 2B.5, 2B.6, 2B.7, 2B.9_
-  - [ ] 25.4 Implement SearchIndexOutboxProcessor
+  - [x] 25.4 Implement SearchIndexOutboxProcessor
     - Poll unprocessed outbox events (every 5s) where dead_lettered = FALSE
     - Generate embeddings and upload to Azure AI Search in batches
     - Mark events as processed on success
     - Increment retry_count with exponential backoff on failure, compute next_retry_at
     - Dead-letter events exceeding max_retries (set dead_lettered = TRUE)
     - _Requirements: 2B.8, 25.12, 29.1, 29.2, 29.3_
-  - [ ] 25.5 Implement IndexRebuildService
+  - [x] 25.5 Implement IndexRebuildService
     - Full reindex for a tenant (delete all, re-embed, re-upload in batches of 100)
     - Admin endpoint to trigger rebuild
     - Support index rebuild for schema changes
     - _Requirements: 2B.11_
-  - [ ] 25.5a Implement dead-letter admin endpoint
+  - [x] 25.5a Implement dead-letter admin endpoint
     - GET /api/v1/admin/outbox/dead-letters (list dead-lettered events)
     - POST /api/v1/admin/outbox/dead-letters/{id}/replay (replay a dead-lettered event)
     - Restrict to administrator role
     - _Requirements: 29.4_
 
-  - [ ]* 25.6 Write unit tests for indexing pipeline
+  - [x]* 25.6 Write unit tests for indexing pipeline
     - shouldWriteOutboxEvent_whenChunkCreated
     - shouldGenerateEmbeddings_inBatches
     - shouldRetryWithBackoff_whenAzureSearchUnavailable
     - shouldDeadLetter_whenMaxRetriesExceeded
     - _Requirements: 2B.1, 2B.8, 25.6, 25.7, 21.1_
-  - [ ]* 25.7 Write property test for outbox at-least-once delivery
+  - [x]* 25.7 Write property test for outbox at-least-once delivery
     - **Property 25: Outbox At-Least-Once Delivery**
     - *For any* outbox event, it must eventually be processed or dead-lettered; no event silently dropped
     - **Validates: Requirements 2B.8, 25.12**
-  - [ ]* 25.8 Write property test for search index eventual consistency
+  - [x]* 25.8 Write property test for search index eventual consistency
     - **Property 22: Search Index Eventual Consistency**
     - *For any* document change in PostgreSQL, a corresponding index entry must appear/update in Azure AI Search within lag threshold
     - **Validates: Requirements 2B.1, 2B.8, 25.12**
 
-- [ ] 26. Hybrid search query service
-  - [ ] 26.1 Implement HybridSearchRouter
+- [x] 26. Hybrid search query service
+  - [x] 26.1 Implement HybridSearchRouter
     - Route structured metadata queries to PostgreSQL (GIN index)
     - Route semantic/text queries to Azure AI Search (hybrid keyword + vector)
     - Circuit breaker with fallback to PostgreSQL-only search when Azure AI Search unavailable
     - _Requirements: 2C.1, 25.10_
-  - [ ] 26.2 Implement SearchSecurityTrimmer
+  - [x] 26.2 Implement SearchSecurityTrimmer
     - Build OData filter with mandatory tenant_id clause
     - Build RBAC filter with allowed_group_ids intersection
     - Exclude soft-deleted documents unless explicitly requested
     - _Requirements: 2C.9, 2C.10_
-  - [ ] 26.3 Implement SearchScoreMerger
+  - [x] 26.3 Implement SearchScoreMerger
     - Merge keyword and vector scores with configurable weights (default 0.5/0.5)
     - Apply recency boost for requirements updated within configurable window (default 90 days)
     - Apply approval status boost (approved > draft)
     - _Requirements: 2C.3, 2C.4, 2C.5_
-  - [ ] 26.4 Implement SearchFallbackHandler
+  - [x] 26.4 Implement SearchFallbackHandler
     - Fallback to PostgreSQL GIN-based search when Azure AI Search unavailable
     - Indicate degraded semantic capabilities in response
     - _Requirements: 25.10, 24.8_
-  - [ ] 26.5 Implement SearchController hybrid search endpoint
+  - [x] 26.5 Implement SearchController hybrid search endpoint
     - POST /api/v1/search/hybrid
     - Support filtering by module, document_type, approval_status, date range
     - Pagination (default 10, max 50 for hybrid search)
     - Log all search queries with query text, user, tenant_id, result count
     - _Requirements: 2C.6, 2C.7, 2C.8, 2C.11, 2C.12_
 
-  - [ ]* 26.6 Write unit tests for hybrid search
+  - [x]* 26.6 Write unit tests for hybrid search
     - shouldRouteToPostgres_whenStructuredQueryOnly
     - shouldRouteToAzureSearch_whenSemanticQuery
     - shouldFallbackToPostgres_whenAzureSearchUnavailable
     - shouldApplyRecencyBoost_whenWithinWindow
     - shouldApplyApprovalBoost_whenApproved
     - _Requirements: 2C.1, 2C.3, 2C.4, 2C.5, 25.10, 21.1_
-  - [ ]* 26.7 Write property test for search index tenant isolation
+  - [x]* 26.7 Write property test for search index tenant isolation
     - **Property 23: Search Index Tenant Isolation**
     - *For any* search query, OData filter must include tenant_id and no cross-tenant results returned
     - **Validates: Requirements 2C.9, 20.2, 25.13**
-  - [ ]* 26.8 Write property test for search index RBAC enforcement
+  - [x]* 26.8 Write property test for search index RBAC enforcement
     - **Property 24: Search Index RBAC Enforcement**
     - *For any* search query, results filtered by user's group memberships via allowed_group_ids
     - **Validates: Requirements 2C.10, 15.4, 15.6**
-  - [ ]* 26.9 Write property test for hybrid score determinism
+  - [x]* 26.9 Write property test for hybrid score determinism
     - **Property 26: Hybrid Score Determinism**
     - *For any* two identical queries in same recency window and index state, rankings must be identical
     - **Validates: Requirements 2C.3, 2C.4, 2C.5**
-  - [ ]* 26.10 Write property test for search fallback availability
+  - [x]* 26.10 Write property test for search fallback availability
     - **Property 27: Search Fallback Availability**
     - *For any* search when Azure AI Search is unavailable, PostgreSQL results returned without error
     - **Validates: Requirements 25.10, 24.8**
 
-- [ ] 27. Checkpoint - Hybrid search pipeline
+- [x] 27. Checkpoint - Hybrid search pipeline
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 28. MCP server and IDE integration
-  - [ ] 28.1 Implement McpConfig and McpAuthorizationFilter
+- [x] 28. MCP server and IDE integration
+  - [x] 28.1 Implement McpConfig and McpAuthorizationFilter
     - Configure MCP tool server with Azure AD token validation
     - Extract tenant_id and user claims from MCP session
     - Verify RBAC permissions before tool execution
     - Request signing (HMAC-SHA256) between MCP server and API
     - _Requirements: 2D.1, 2D.7, 2D.8, 23.10_
-  - [ ] 28.2 Implement MCP tool handlers
+  - [x] 28.2 Implement MCP tool handlers
     - search_documents: search by type, metadata, date range with RBAC filtering
     - get_document: retrieve document metadata by ID
     - search_requirements: hybrid keyword + semantic search with weighted scoring
     - get_requirement_by_id: retrieve requirement with optional version (default: latest approved)
     - get_related_requirements: vector similarity search for related requirements
     - _Requirements: 2D.2, 2D.3, 2D.4, 2D.5, 2D.6, 2D.11, 2D.12_
-  - [ ] 28.3 Implement RetrievalAuditService
+  - [x] 28.3 Implement RetrievalAuditService
     - Log all MCP tool invocations asynchronously
     - Capture: tool_name, parameters, user, tenant_id, result_count, timestamp
     - _Requirements: 2D.9, 25.8_
-  - [ ] 28.4 Implement ContextInjectionService
+  - [x] 28.4 Implement ContextInjectionService
     - get_requirements_for_context: bulk retrieve with token limit safeguards (default 8000 tokens)
     - Prioritize by relevance score and recency when token limit exceeded
     - Support formatting templates: json, system_message, user_message, structured_input
     - Include traceability annotation format in responses
     - _Requirements: 2E.1, 2E.2, 2E.3, 2E.4, 2E.5, 2E.6, 2E.7, 2E.8, 2E.9_
 
-  - [ ] 28.5 Implement validate_requirement_references endpoint
+  - [x] 28.5 Implement validate_requirement_references endpoint
     - POST /api/v1/requirements/validate-references
     - Validate requirement IDs in code comments exist and are current
     - Return validation status for each reference
     - _Requirements: 2E.10_
-  - [ ]* 28.6 Write unit tests for MCP tools and context injection
+  - [x]* 28.6 Write unit tests for MCP tools and context injection
     - shouldAuthenticateMcpRequest_withAzureAdToken
     - shouldEnforceRbac_inMcpToolResponses
     - shouldLogToolInvocation_inRetrievalAudit
@@ -703,21 +703,21 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - shouldReturnLatestApproved_whenVersionNotSpecified
     - _Requirements: 2D.4, 2D.7, 2D.9, 2E.2, 21.1_
 
-- [ ] 29. Index drift reconciliation and monitoring
-  - [ ] 29.1 Implement scheduled index drift reconciliation
+- [x] 29. Index drift reconciliation and monitoring
+  - [x] 29.1 Implement scheduled index drift reconciliation
     - Daily job (3 AM) comparing PG chunk count vs Azure AI Search index count
     - Alert when drift exceeds 1%
     - _Requirements: 25.12_
-  - [ ] 29.2 Implement caching for frequently accessed requirement chunks
+  - [x] 29.2 Implement caching for frequently accessed requirement chunks
     - Configurable TTL (default 1 hour)
     - _Requirements: 25.11_
-  - [ ] 29.3 Implement monitoring metrics
+  - [x] 29.3 Implement monitoring metrics
     - Hybrid search performance: query latency, index size, embedding generation time, cache hit rate
     - Outbox lag monitoring with alert threshold (default 5 minutes)
     - _Requirements: 25.12, 25.15_
 
-- [ ] 30. Health endpoints and operational monitoring
-  - [ ] 30.1 Implement health and metrics endpoints
+- [x] 30. Health endpoints and operational monitoring
+  - [x] 30.1 Implement health and metrics endpoints
     - /actuator/health with Blob Storage and PostgreSQL connectivity checks (5s timeout)
     - /actuator/health/liveness and /actuator/health/readiness
     - Metrics for upload/search performance (count, latency p50/p95/p99, error rate)
@@ -727,34 +727,34 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Alert when error rate exceeds threshold (default 1%)
     - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 18.7, 18.8, 18.9, 18.10, 18.11, 18.12_
 
-- [ ] 31. Checkpoint - All backend features complete
+- [x] 31. Checkpoint - All backend features complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 32. Frontend core services and models
-  - [ ] 32.1 Create TypeScript model interfaces
+- [x] 32. Frontend core services and models
+  - [x] 32.1 Create TypeScript model interfaces
     - Document, DocumentType, SearchRequest, SearchResult, Group, AuditLog, LegalHold, VersionHistory
     - Use strict TypeScript (no `any`)
     - _Requirements: 22.4_
-  - [ ] 32.2 Implement core services
+  - [x] 32.2 Implement core services
     - AuthService (JWT handling, Azure AD integration)
     - TenantService (tenant context for API calls)
     - _Requirements: 23.1, 20.3_
-  - [ ] 32.3 Implement guards and interceptors
+  - [x] 32.3 Implement guards and interceptors
     - AuthGuard, RoleGuard for route protection
     - JwtInterceptor for attaching tokens to API calls
     - HttpErrorInterceptor for global error handling
     - _Requirements: 23.1, 15.3_
-  - [ ] 32.4 Implement API services
+  - [x] 32.4 Implement API services
     - DocumentService, SearchService, DocumentTypeService, GroupService, AuditService
     - All calls through HttpClient (no direct calls in components)
     - _Requirements: 22.4_
-  - [ ]* 32.5 Write Vitest tests for API services
+  - [x]* 32.5 Write Vitest tests for API services
     - Test data transformations and response mapping
     - Test error handling in interceptors
     - _Requirements: 21.3_
 
-- [ ] 33. Frontend shared components
-  - [ ] 33.1 Implement shared components
+- [x] 33. Frontend shared components
+  - [x] 33.1 Implement shared components
     - DocumentCardComponent (glass card pattern, design system tokens)
     - SearchBarComponent (search input with filters)
     - PaginationComponent
@@ -762,99 +762,99 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - All standalone with OnPush change detection
     - Minimum 44px touch targets on all interactive elements
     - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.7, 22.8_
-  - [ ] 33.2 Implement shared pipes and directives
+  - [x] 33.2 Implement shared pipes and directives
     - FileSizePipe (format bytes to KB/MB/GB)
     - DateFormatPipe
     - DragDropDirective (for file upload)
     - _Requirements: 22.4_
-  - [ ]* 33.3 Write Vitest tests for pipes
+  - [x]* 33.3 Write Vitest tests for pipes
     - Test FileSizePipe formatting (0, KB, MB, GB boundaries)
     - Test null/undefined handling
     - _Requirements: 21.3_
 
-- [ ] 34. Frontend document management features
-  - [ ] 34.1 Implement document list page
+- [x] 34. Frontend document management features
+  - [x] 34.1 Implement document list page
     - DocumentListComponent with search, filtering, pagination
     - Use Signals for reactive state, Reactive Forms for filters
     - Glass card pattern for document cards
     - _Requirements: 2.1, 2.8, 22.4, 22.5, 22.6, 22.7_
-  - [ ] 34.2 Implement document upload page
+  - [x] 34.2 Implement document upload page
     - DocumentUploadComponent with drag-and-drop file selection
     - Dynamic metadata form based on document type JSON schema
     - Client-side validation before submission
     - Progress indicator during upload
     - _Requirements: 1.1, 1.3, 22.4, 22.5, 22.6_
 
-  - [ ] 34.3 Implement document detail page
+  - [x] 34.3 Implement document detail page
     - DocumentDetailComponent showing metadata, version history, legal hold status
     - Actions: download, preview, edit metadata, upload new version, soft delete, restore
     - _Requirements: 3.1, 4.1, 5.6, 6.1, 12.1_
-  - [ ] 34.4 Implement document preview page
+  - [x] 34.4 Implement document preview page
     - DocumentPreviewComponent with embedded PDF viewer
     - Secure streaming with authorization
     - _Requirements: 12.1, 12.2, 12.5_
-  - [ ]* 34.5 Write Vitest tests for document feature services
+  - [x]* 34.5 Write Vitest tests for document feature services
     - Test search response transformation
     - Test metadata validation logic
     - _Requirements: 21.3_
 
-- [ ] 35. Frontend search features
-  - [ ] 35.1 Implement search page
+- [x] 35. Frontend search features
+  - [x] 35.1 Implement search page
     - SearchPageComponent with full-text and metadata search
     - AdvancedSearchComponent with date range, document type, metadata field filters
     - Bulk download selection and trigger
     - _Requirements: 2.1, 2.2, 2.3, 11.1, 22.4, 22.5_
-  - [ ]* 35.2 Write Vitest tests for search logic
+  - [x]* 35.2 Write Vitest tests for search logic
     - Test search request building and filter composition
     - _Requirements: 21.3_
 
-- [ ] 36. Frontend admin features
-  - [ ] 36.1 Implement document type administration
+- [x] 36. Frontend admin features
+  - [x] 36.1 Implement document type administration
     - DocumentTypesComponent: CRUD for document types with JSON schema editor
     - Retention policy configuration per type
     - Allowed groups assignment
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 14.1_
-  - [ ] 36.2 Implement group management
+  - [x] 36.2 Implement group management
     - GroupsComponent: CRUD for groups, user assignment/removal
     - Hierarchical group display
     - _Requirements: 16.1, 16.2, 16.3, 16.4_
-  - [ ] 36.3 Implement audit log viewer
+  - [x] 36.3 Implement audit log viewer
     - AuditLogsComponent: search and filter audit logs
     - Export to CSV/JSON
     - _Requirements: 9.7, 9.11, 17.1, 17.5_
-  - [ ] 36.4 Implement retention management page
+  - [x] 36.4 Implement retention management page
     - RetentionComponent: view documents approaching expiration
     - Retention policy overview per document type
     - _Requirements: 8.1, 8.6_
 
-- [ ] 37. Frontend legal hold features
-  - [ ] 37.1 Implement legal hold management
+- [x] 37. Frontend legal hold features
+  - [x] 37.1 Implement legal hold management
     - LegalHoldsComponent: place/release holds, list active holds
     - Filter by case reference
     - Bulk hold operations
     - _Requirements: 10.1, 10.3, 10.5, 10.9_
 
-- [ ] 38. Frontend governance dashboards
-  - [ ] 38.1 Implement requirement version history dashboard
+- [x] 38. Frontend governance dashboards
+  - [x] 38.1 Implement requirement version history dashboard
     - Visualization showing version history with approval status per version
     - Display version number, approval status, modified date, modified by, change summary
     - CSV export for requirement version history
     - _Requirements: 17A.1, 17A.2, 17A.6_
-  - [ ] 38.2 Implement traceability dashboard
+  - [x] 38.2 Implement traceability dashboard
     - Requirement ID to code mapping based on traceability annotations
     - Identify requirements with no associated code implementation (missing implementation flag)
     - Filter by module, document type, approval status
     - CSV export for traceability mapping
     - _Requirements: 17A.3, 17A.4, 17A.5, 17A.7_
-  - [ ] 38.3 Implement retrieval audit dashboard
+  - [x] 38.3 Implement retrieval audit dashboard
     - Track retrieval audit events: requirement_id, version, user, timestamp, tool_name, query_parameters
     - Visualization of requirement retrieval frequency
     - Export with filtering by date range, user, requirement ID
     - Role-based access (compliance officer, administrator)
     - _Requirements: 17A.8, 17A.9, 17A.10, 17A.11_
 
-- [ ] 39. Frontend routing and lazy loading
-  - [ ] 39.1 Configure Angular routing with lazy-loaded feature modules
+- [x] 39. Frontend routing and lazy loading
+  - [x] 39.1 Configure Angular routing with lazy-loaded feature modules
     - Documents feature routes (list, upload, detail, preview)
     - Search feature routes
     - Admin feature routes (document types, groups, retention, audit logs)
@@ -863,16 +863,16 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Apply AuthGuard and RoleGuard to protected routes
     - _Requirements: 15.3, 22.4_
 
-- [ ] 40. Checkpoint - All frontend features complete
+- [x] 40. Checkpoint - All frontend features complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 41. Final integration and wiring
-  - [ ] 41.1 Wire frontend to backend API
+- [x] 41. Final integration and wiring
+  - [x] 41.1 Wire frontend to backend API
     - Configure API base URL and environment-specific settings
     - Verify all REST endpoints are connected to frontend services
     - Ensure JWT token flow works end-to-end (Azure AD → interceptor → API)
     - _Requirements: 23.1, 22.4_
-  - [ ] 41.2 Configure Spring Boot application properties
+  - [x] 41.2 Configure Spring Boot application properties
     - Database connection (PostgreSQL), Flyway, JPA settings
     - Azure Blob Storage connection
     - Azure AI Search connection
@@ -881,13 +881,13 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
     - Rate limiting configuration
     - Circuit breaker configuration
     - _Requirements: 23.2, 24.7_
-  - [ ]* 41.3 Write controller integration tests for key flows
+  - [x]* 41.3 Write controller integration tests for key flows
     - Upload → search → download flow
     - Upload → version → restore flow
     - Legal hold → block delete flow
     - _Requirements: 21.4_
 
-- [ ] 42. Final checkpoint - Full system
+- [x] 42. Final checkpoint - Full system
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
