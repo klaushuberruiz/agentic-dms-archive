@@ -1,9 +1,14 @@
 @use '@angular/material' as mat;
+@use './styles/design-system';
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
-  font-family: var(--md-sys-typescale-body-large-font, Roboto, "Helvetica Neue", sans-serif);
-  background: var(--surface-ground, #fafafa);
-  color: var(--md-sys-color-on-surface, #1c1b1f);
+  font-family: Inter, Roboto, 'Helvetica Neue', sans-serif;
+  color: var(--ads-color-text);
+}
+
+* {
+  box-sizing: border-box;
 }

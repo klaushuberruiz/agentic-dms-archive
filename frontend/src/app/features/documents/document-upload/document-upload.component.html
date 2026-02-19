@@ -1,0 +1,16 @@
+<section class="ads-card">
+  <h2 class="ads-section-title">Upload Document</h2>
+  <form class="ads-grid" [formGroup]="form" (ngSubmit)="upload()">
+    <label>Document Type ID <input class="ads-input" formControlName="documentTypeId" /></label>
+    <label>Metadata JSON <textarea class="ads-textarea" formControlName="metadataJson"></textarea></label>
+
+    <div class="ads-dropzone" appDragDrop (fileDropped)="onFileSelected($event)">
+      Drag and drop PDF here
+      <input type="file" accept="application/pdf" (change)="onFileSelected($any($event.target).files[0])" />
+    </div>
+
+    <p *ngIf="selectedFileName()">Selected: {{ selectedFileName() }}</p>
+    <progress [value]="uploadProgress()" max="100"></progress>
+    <button class="ads-btn-primary" type="submit">Upload</button>
+  </form>
+</section>
