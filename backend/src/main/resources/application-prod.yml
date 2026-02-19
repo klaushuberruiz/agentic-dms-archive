@@ -17,6 +17,38 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  cloud:
+    azure:
+      keyvault:
+        secret:
+          endpoint: ${AZURE_KEYVAULT_ENDPOINT:}
+
+azure:
+  storage:
+    blob:
+      connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+      container-name: ${AZURE_STORAGE_CONTAINER:documents}
+
+  ai:
+    search:
+      endpoint: ${AZURE_SEARCH_ENDPOINT}
+      api-key: ${AZURE_SEARCH_API_KEY}
+      index-name: ${AZURE_SEARCH_INDEX:requirements}
+    openai:
+      endpoint: ${AZURE_OPENAI_ENDPOINT}
+      api-key: ${AZURE_OPENAI_API_KEY}
+      deployment-name: ${AZURE_OPENAI_DEPLOYMENT:text-embedding-ada-002}
+
+dms:
+  rate-limit:
+    requests-per-minute: ${DMS_RATE_LIMIT_RPM:300}
+
+  resilience:
+    circuit-breaker:
+      sliding-window-size: ${DMS_CB_WINDOW_SIZE:20}
+      minimum-number-of-calls: ${DMS_CB_MIN_CALLS:10}
+      failure-rate-threshold: ${DMS_CB_FAILURE_RATE:50}
+
 logging:
   level:
     com.dms: INFO
