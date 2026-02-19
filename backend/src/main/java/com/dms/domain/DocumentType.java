@@ -56,4 +56,7 @@ public class DocumentType {
     
     @Column(name = "modified_by")
     private String modifiedBy;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 }

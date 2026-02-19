@@ -81,7 +81,7 @@ public class DocumentService {
         UUID tenantId = tenantContext.getCurrentTenantId();
         
         Document document = documentRepository
-            .findByIdAndTenantId(documentId, tenantId)
+             .findByIdAndTenantIdAndDeletedAtIsNull(documentId, tenantId)
             .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
         
         return mapToResponse(document);

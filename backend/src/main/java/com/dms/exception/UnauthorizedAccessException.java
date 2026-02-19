@@ -1,8 +1,10 @@
 package com.dms.exception;
 
-public class UnauthorizedAccessException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UnauthorizedAccessException extends DmsException {
 
     public UnauthorizedAccessException(String message) {
-        super(message);
+        super("UNAUTHORIZED_ACCESS", HttpStatus.FORBIDDEN, message);
     }
 }
