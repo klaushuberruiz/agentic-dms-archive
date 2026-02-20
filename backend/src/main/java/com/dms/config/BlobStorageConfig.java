@@ -3,7 +3,7 @@ package com.dms.config;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class BlobStorageConfig {
 
     @Bean
-    @ConditionalOnProperty(prefix = "azure.storage.blob", name = "connection-string")
+    @ConditionalOnExpression("'${azure.storage.blob.connection-string:}'.length() > 0")
     public BlobServiceClient blobServiceClient(
         @org.springframework.beans.factory.annotation.Value("${azure.storage.blob.connection-string}") String connectionString
     ) {
@@ -19,7 +19,7 @@ public class BlobStorageConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "azure.storage.blob", name = "connection-string")
+    @ConditionalOnExpression("'${azure.storage.blob.connection-string:}'.length() > 0")
     public BlobContainerClient blobContainerClient(
         BlobServiceClient blobServiceClient,
         @org.springframework.beans.factory.annotation.Value("${azure.storage.blob.container-name:documents}") String containerName
