@@ -900,3 +900,55 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
 - All backend tests use @ExtendWith(MockitoExtension.class) with constructor injection
 - Frontend tests use Vitest for pure functions, services, and data transformations
 - Coverage targets: 80% line / 75% branch for business logic
+
+## Gap Remediation Tasks (Post-Implementation Audit)
+
+### Missing / Partially Implemented Requirements
+
+- [ ] R1 Document Upload hardening: enforce PDF magic-byte validation, 100MB file limit, idempotency-key deduplication, content-hash persistence, and blob/DB rollback cleanup on partial failure. _Requirements: 1.1, 1.8, 1.9, 1.10, 1.11, 26.3_
+- [ ] R2 Document Search: implement SearchService + SearchController business logic for metadata filters, date range, pagination metadata, RBAC trimming, tenant isolation, and soft-delete exclusion. _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.7, 2.8, 2.10, 2.11_
+- [ ] R2A Parsing/Chunking pipeline: implement Apache Tika/POI extraction with requirement-level chunking and max-token constraints. _Requirements: 2A.1-2A.8_
+- [ ] R2B Hybrid indexing: implement Azure AI Search keyword+vector indexing, embedding generation, and metadata filters. _Requirements: 2B.1-2B.8_
+- [ ] R2C Hybrid query routing: implement keyword/vector retrieval, score merge, fallback behavior, and recency boost. _Requirements: 2C.1-2C.8_
+- [ ] R2D MCP integration: implement MCP tool endpoint(s), schema, authz filters, and context injection format for IDE agents. _Requirements: 2D.1-2D.8_
+- [ ] R2E IDE code-gen integration: provide retrieval response contract with requirement IDs, snippets, and traceability metadata for generated code workflows. _Requirements: 2E.1-2E.6_
+- [ ] R3 Document Download: add secure download endpoint with RBAC enforcement, legal-hold/retention checks, and audit trail. _Requirements: 3.1-3.9_
+- [ ] R4 Metadata Update: implement partial metadata update flow with schema re-validation, optimistic locking, and audit JSON diff. _Requirements: 4.1-4.10, 26.1_
+- [ ] R5 Versioning: implement immutable version history, restore-as-new-version behavior, and version retrieval endpoints. _Requirements: 5.1-5.10_
+- [ ] R6 Soft Delete: implement soft-delete lifecycle, query exclusion defaults, and restore behavior. _Requirements: 6.1-6.8_
+- [ ] R7 Hard Delete: implement retention/legal-hold aware permanent deletion workflow and audit evidence. _Requirements: 7.1-7.9_
+- [ ] R8 Retention Management: implement retention policy evaluator/scheduler and deletion eligibility state transitions. _Requirements: 8.1-8.9_
+- [ ] R9 Audit Logging completeness: extend audit coverage to all required events (view/download/preview/update/delete/auth), correlation IDs, and immutable guarantees. _Requirements: 9.1-9.10_
+- [ ] R10 Legal Hold: implement create/list/release legal hold APIs and enforcement across delete operations. _Requirements: 10.1-10.10_
+- [ ] R11 Bulk Download: implement bulk packaging (zip/stream) with authorization and audit controls. _Requirements: 11.1-11.8_
+- [ ] R12 Preview: implement preview endpoint/component (first page/thumbnail/text preview as specified) with RBAC and audit logging. _Requirements: 12.1-12.8_
+- [ ] R13 Document Type Admin: complete CRUD lifecycle, activation/deactivation constraints, and schema versioning controls. _Requirements: 13.1-13.10, 27.1-27.5_
+- [ ] R14 Dynamic schema validation: support schema evolution compatibility checks and legacy-document read guarantees. _Requirements: 14.1-14.6_
+- [ ] R15 RBAC: complete role/group permission model enforcement across all controllers and service methods. _Requirements: 15.1-15.10_
+- [ ] R16 Group Management: implement group CRUD + user membership management APIs and validation. _Requirements: 16.1-16.9_
+- [ ] R17 Access History: implement per-document access history endpoint and UI integration. _Requirements: 17.1-17.7_
+- [ ] R17A Governance/Traceability: implement traceability dashboard + retrieval audit workflows end-to-end. _Requirements: 17A.1-17A.8_
+- [ ] R18 Monitoring/Health: add full actuator/health probes, dependency checks, and metrics/alerts for blob, db, and search. _Requirements: 18.1-18.8_
+- [ ] R19 Backup/Restore: document and automate backup/restore playbooks plus validation drills. _Requirements: 19.1-19.8_
+- [ ] R20 Multi-tenancy hardening: ensure tenant isolation enforcement in all repositories/queries/controllers and security context handling. _Requirements: 20.1-20.8_
+- [ ] R21 Code quality/testing: add missing unit/integration/property tests for implemented requirements and enforce coverage gates in CI. _Requirements: 21.1-21.9_
+- [ ] R22 Frontend design standards: implement design tokens, accessibility checks, and consistent standalone OnPush/Signals patterns across UI modules. _Requirements: 22.1-22.10_
+- [ ] R23 Security hardening: add rate limiting, secure headers/CORS review, input sanitization, and threat/audit controls per spec. _Requirements: 23.1-23.13_
+- [ ] R24 SLA controls: implement SLI/SLO instrumentation and operational dashboards aligned to availability/latency targets. _Requirements: 24.1-24.8_
+- [ ] R25 Hybrid search performance: implement scalability/performance safeguards and benchmarking for hybrid retrieval path. _Requirements: 25.1-25.8_
+- [ ] R26 Data integrity/optimistic locking: wire entity versioning and conflict responses consistently in update/delete/version flows. _Requirements: 26.1-26.4_
+- [ ] R28 Full-text infrastructure: implement PostgreSQL tsvector maintenance + indexing/query usage in search path. _Requirements: 28.1-28.7_
+- [ ] R29 Outbox resilience: complete outbox worker retries, dead-letter handling, replay tooling, and observability. _Requirements: 29.1-29.8_
+
+### Missing / Partially Implemented Design Items
+
+- [ ] Design-API: implement all REST API endpoints listed in design "REST API Endpoints" section; currently multiple controllers are stubs with no handlers.
+- [ ] Design-MCP: implement "MCP Server Service Definition" contract and runtime authorization flow.
+- [ ] Design-Hybrid Components: implement classes described in "New Backend Components" and "Component Diagram" (currently several are placeholders with no logic).
+- [ ] Design-Index Schema: implement and validate Azure AI Search index schema mapping (keyword/vector/filterable fields).
+- [ ] Design-Outbox Lifecycle: implement full "Index Update Lifecycle" and "Outbox Pattern" processor with retry/backoff/dead-letter.
+- [ ] Design-Query Routing: implement "Query Routing Logic", "Security Trimming in Search", and "Score Merging Strategy" as executable services.
+- [ ] Design-Reindexing: implement "Reindexing Strategy" service/API and operations runbook.
+- [ ] Design-Failure Matrix: implement exception handling + fallback behavior per "Failure Handling Matrix" and "New Exception Types".
+- [ ] Design-Circuit Breaker: implement the documented blob-storage circuit breaker/retry policy (currently direct upload call only).
+- [ ] Design-Correctness Properties: add automated property/integration tests for all properties not currently covered (P6-P10, P12-P18, P20-P29).
