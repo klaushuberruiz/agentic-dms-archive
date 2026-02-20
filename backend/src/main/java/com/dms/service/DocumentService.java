@@ -87,6 +87,23 @@ public class DocumentService {
         return mapToResponse(document);
     }
     
+    @Transactional
+    public void hardDeleteDocument(UUID documentId) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+        
+        // Delete blob from storage
+        blobStorageService.deleteBlob(document.getBlobPath());
+        
+        // Delete document and related entities
+        documentRepository.delete(document);
+        
+        log.info("Hard deleted document: documentId={}", documentId);
+    }
+    
     private String generateBlobPath(UUID tenantId, String documentType, Instant timestamp, UUID documentId, int version) {
         int year = timestamp.atZone(java.time.ZoneOffset.UTC).getYear();
         int month = timestamp.atZone(java.time.ZoneOffset.UTC).getMonthValue();

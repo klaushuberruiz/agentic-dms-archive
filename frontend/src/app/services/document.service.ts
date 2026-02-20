@@ -29,17 +29,41 @@ export class DocumentService {
   }
 
   updateMetadata(documentId: string, metadata: Record<string, unknown>): Observable<Document> {
-    return this.http.patch<Document>(`${this.baseUrl}/${documentId}/metadata`, { metadata });
+    return this.http.put<Document>(`${this.baseUrl}/${documentId}/metadata`, { metadata });
   }
 
   download(documentId: string): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/${documentId}/download`, { responseType: 'blob' });
   }
 
-  softDelete(documentId: string, reason: string): Observable<void> {
-    return this.http.request<void>('delete', `${this.baseUrl}/${documentId}`, {
-      body: { reason },
+  preview(documentId: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${documentId}/preview`, { responseType: 'blob' });
+  }
+
+  getVersions(documentId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${documentId}/versions`);
+  }
+
+  uploadNewVersion(documentId: string, file: File): Observable<HttpEvent<Document>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Document>(`${this.baseUrl}/${documentId}/versions`, formData, {
+      reportProgress: true,
+      observe: 'events',
     });
+  }
+
+  getVersion(documentId: string, versionNumber: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${documentId}/versions/${versionNumber}`, { responseType: 'blob' });
+  }
+
+  softDelete(documentId: string, reason?: string): Observable<void> {
+    const params = reason ? { reason } : {};
+    return this.http.delete<void>(`${this.baseUrl}/${documentId}`, { params });
+  }
+
+  hardDelete(documentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${documentId}/hard`);
   }
 
   restore(documentId: string): Observable<Document> {

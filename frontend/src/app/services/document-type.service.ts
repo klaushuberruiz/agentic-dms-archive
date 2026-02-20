@@ -10,7 +10,29 @@ export class DocumentTypeService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(): Observable<DocumentType[]> {
-    return this.http.get<DocumentType[]>(this.baseUrl);
+  list(page = 0, pageSize = 20): Observable<any> {
+    return this.http.get<any>(this.baseUrl, {
+      params: { page, pageSize },
+    });
+  }
+
+  getActive(): Observable<DocumentType[]> {
+    return this.http.get<DocumentType[]>(`${this.baseUrl}/active`);
+  }
+
+  getById(typeId: string): Observable<DocumentType> {
+    return this.http.get<DocumentType>(`${this.baseUrl}/${typeId}`);
+  }
+
+  create(request: Partial<DocumentType>): Observable<DocumentType> {
+    return this.http.post<DocumentType>(this.baseUrl, request);
+  }
+
+  update(typeId: string, request: Partial<DocumentType>): Observable<DocumentType> {
+    return this.http.put<DocumentType>(`${this.baseUrl}/${typeId}`, request);
+  }
+
+  deactivate(typeId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${typeId}`);
   }
 }

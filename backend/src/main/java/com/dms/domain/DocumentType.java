@@ -48,6 +48,10 @@ public class DocumentType {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
     
+    public Integer getDefaultRetentionDays() {
+        return retentionDays;
+    }
+    
     @Column(name = "created_by", nullable = false)
     private String createdBy;
     

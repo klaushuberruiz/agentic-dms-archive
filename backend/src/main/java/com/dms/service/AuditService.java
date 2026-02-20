@@ -37,6 +37,14 @@ public class AuditService {
         createAuditLog("DOWNLOAD", "DOCUMENT", documentId, Map.of());
     }
     
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logSearch(String query, int resultCount) {
+        Map<String, Object> details = new HashMap<>();
+        details.put("query", query);
+        details.put("resultCount", resultCount);
+        createAuditLog("SEARCH", "DOCUMENT", null, details);
+    }
+    
     private void createAuditLog(String action, String entityType, UUID entityId, Map<String, Object> details) {
         AuditLog auditLog = AuditLog.builder()
             .tenantId(tenantContext.getCurrentTenantId())
