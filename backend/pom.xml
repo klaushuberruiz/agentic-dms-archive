@@ -21,6 +21,7 @@
     <properties>
         <java.version>17</java.version>
         <azure.version>5.8.0</azure.version>
+        <lombok.version>1.18.26</lombok.version>
     </properties>
     
     <dependencies>
@@ -63,10 +64,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-search-documents</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-ai-openai</artifactId>
-        </dependency>
+        <!-- Azure OpenAI dependency intentionally omitted here; add a versioned dependency when available in dependencyManagement or explicitly. -->
         
         <!-- Database -->
         <dependency>
@@ -138,10 +136,7 @@
         </dependency>
 
         <!-- Flyway PostgreSQL dialect -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-        </dependency>
+        <!-- Note: explicit flyway DB dialect dependency removed to use flyway-core defaults -->
 
         <!-- Testing -->
         <dependency>

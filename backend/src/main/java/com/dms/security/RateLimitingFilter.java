@@ -46,7 +46,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         });
 
         if (counter.count.get() > maxRequestsPerMinute) {
-            response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+            response.setStatus(429);
             response.setHeader("Retry-After", "60");
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(objectMapper.writeValueAsString(Map.of(
