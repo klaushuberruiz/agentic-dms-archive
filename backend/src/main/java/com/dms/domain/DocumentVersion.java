@@ -3,15 +3,17 @@ package com.dms.domain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "document_versions")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -35,6 +37,12 @@ public class DocumentVersion {
     
     @Column(name = "file_size_bytes", nullable = false)
     private Long fileSizeBytes;
+    
+    @Column(name = "content_type", nullable = false)
+    private String contentType;
+
+    @Column(name = "content_hash")
+    private String contentHash;
     
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;

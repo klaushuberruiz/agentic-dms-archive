@@ -1,20 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { SearchRequest } from '../../../models/search.model';
 
 @Component({
   selector: 'app-advanced-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
     <form [formGroup]="form" (ngSubmit)="submit()">
       <input formControlName="dateFrom" type="date" />
       <input formControlName="dateTo" type="date" />
-      <input formControlName="documentType" placeholder="Document type" />
-      <input formControlName="metadataKey" placeholder="Metadata key" />
-      <input formControlName="metadataValue" placeholder="Metadata value" />
-      <button type="submit">Apply filters</button>
+      <input formControlName="documentType" [attr.placeholder]="'search.documentType' | translate" />
+      <input formControlName="metadataKey" [attr.placeholder]="'search.metadataKey' | translate" />
+      <input formControlName="metadataValue" [attr.placeholder]="'search.metadataValue' | translate" />
+      <button type="submit">{{ 'search.applyFilters' | translate }}</button>
     </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

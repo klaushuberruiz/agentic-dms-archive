@@ -4,8 +4,9 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.time.Instant;
@@ -14,7 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "document_types")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -28,6 +30,9 @@ public class DocumentType {
     
     @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(name = "display_name")
+    private String displayName;
     
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -44,14 +49,13 @@ public class DocumentType {
     
     @Column(name = "min_retention_days", nullable = false)
     private Integer minRetentionDays;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
     
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
-    
-    public Integer getDefaultRetentionDays() {
-        return retentionDays;
-    }
-    
+
     @Column(name = "created_by", nullable = false)
     private String createdBy;
     
@@ -60,4 +64,8 @@ public class DocumentType {
     
     @Column(name = "modified_by")
     private String modifiedBy;
+
+    @Version
+    @Column(name = "entity_version", nullable = false)
+    private Long entityVersion;
 }

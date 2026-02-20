@@ -10,6 +10,8 @@ import com.dms.repository.DocumentTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +30,8 @@ public class DocumentService {
     private final BlobStorageService blobStorageService;
     private final MetadataValidationService metadataValidationService;
     private final AuditService auditService;
+    private final AuthorizationService authorizationService;
+    private final LegalHoldService legalHoldService;
     
     @Transactional
     public DocumentResponse uploadDocument(DocumentUploadRequest request, MultipartFile file) {
@@ -38,6 +42,14 @@ public class DocumentService {
         DocumentType documentType = documentTypeRepository
             .findByIdAndTenantId(request.getDocumentTypeId(), tenantId)
             .orElseThrow(() -> new DocumentNotFoundException("Document type not found"));
+
+        if (Boolean.FALSE.equals(documentType.getActive())) {
+            throw new com.dms.exception.ValidationException("Document type is deactivated");
+        }
+
+        if (!authorizationService.canUploadToType(documentType.getAllowedGroups())) {
+            throw new com.dms.exception.UnauthorizedAccessException("User cannot upload to this document type");
+        }
         
         // Validate metadata against schema
         metadataValidationService.validate(request.getMetadata(), documentType.getMetadataSchema());
@@ -83,8 +95,127 @@ public class DocumentService {
         Document document = documentRepository
             .findByIdAndTenantId(documentId, tenantId)
             .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        authorizationService.assertCanAccessDocument(document);
         
         return mapToResponse(document);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DocumentResponse> listDocuments(Pageable pageable) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        return documentRepository.findByTenantIdAndDeletedAtIsNull(tenantId, pageable)
+            .map(this::mapToResponse);
+    }
+
+    @Transactional
+    public void softDeleteDocument(UUID documentId, String reason) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        String userId = tenantContext.getCurrentUserId();
+
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        authorizationService.assertCanAccessDocument(document);
+
+        // Check legal holds
+        if (legalHoldService.hasActiveLegalHolds(document.getId())) {
+            throw new com.dms.exception.LegalHoldActiveException("Document has active legal hold");
+        }
+
+        document.setDeletedAt(java.time.Instant.now());
+        document.setDeletedBy(userId);
+        documentRepository.save(document);
+
+        auditService.logSoftDelete(document.getId(), reason);
+    }
+
+    @Transactional
+    public void restoreDocument(UUID documentId) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        String userId = tenantContext.getCurrentUserId();
+
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        authorizationService.assertCanAccessDocument(document);
+
+        if (document.getDeletedAt() == null) {
+            return;
+        }
+
+        java.time.Instant deletedAt = document.getDeletedAt();
+        if (deletedAt == null) {
+            return;
+        }
+
+        // 30 day recovery window
+        java.time.Instant now = java.time.Instant.now();
+        java.time.Instant allowed = deletedAt.plus(30, java.time.temporal.ChronoUnit.DAYS);
+        if (now.isAfter(allowed)) {
+            throw new com.dms.exception.ValidationException("Recovery window exceeded");
+        }
+
+        document.setDeletedAt(null);
+        document.setDeletedBy(null);
+        documentRepository.save(document);
+
+        auditService.logRestore(document.getId(), userId);
+    }
+
+    @Transactional
+    public DocumentResponse updateMetadata(UUID documentId, java.util.Map<String, Object> metadata) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        String userId = tenantContext.getCurrentUserId();
+
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        // Validate against document type schema
+        metadataValidationService.validate(metadata, document.getDocumentType().getMetadataSchema());
+
+        java.util.Map<String, Object> before = document.getMetadata();
+        document.setMetadata(metadata);
+        document.setModifiedAt(java.time.Instant.now());
+        document.setModifiedBy(userId);
+        document = documentRepository.save(document);
+
+        auditService.logMetadataUpdate(document.getId(), before, metadata);
+
+        return mapToResponse(document);
+    }
+
+    @Transactional(readOnly = true)
+    public java.io.InputStream downloadDocument(UUID documentId) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        authorizationService.assertCanAccessDocument(document);
+
+        auditService.logDocumentDownload(document.getId());
+
+        return blobStorageService.downloadBlob(document.getBlobPath());
+    }
+
+    @Transactional(readOnly = true)
+    public java.io.InputStream previewDocument(UUID documentId) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+
+        Document document = documentRepository
+            .findByIdAndTenantId(documentId, tenantId)
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        authorizationService.assertCanAccessDocument(document);
+
+        auditService.logDocumentPreview(document.getId());
+
+        return blobStorageService.downloadBlob(document.getBlobPath());
     }
     
     @Transactional
@@ -94,12 +225,17 @@ public class DocumentService {
         Document document = documentRepository
             .findByIdAndTenantId(documentId, tenantId)
             .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+
+        if (!authorizationService.canDeleteDocument(document)) {
+            throw new com.dms.exception.UnauthorizedAccessException("User cannot hard-delete document");
+        }
         
         // Delete blob from storage
         blobStorageService.deleteBlob(document.getBlobPath());
         
         // Delete document and related entities
         documentRepository.delete(document);
+        auditService.logSoftDelete(documentId, "HARD_DELETE");
         
         log.info("Hard deleted document: documentId={}", documentId);
     }
@@ -122,7 +258,7 @@ public class DocumentService {
             .createdBy(document.getCreatedBy())
             .modifiedAt(document.getModifiedAt())
             .modifiedBy(document.getModifiedBy())
-            .hasActiveLegalHold(document.hasActiveLegalHold())
+            .hasActiveLegalHold(legalHoldService.hasActiveLegalHolds(document.getId()))
             .retentionExpiresAt(document.getRetentionExpiresAt())
             .build();
     }

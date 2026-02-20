@@ -1,21 +1,29 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { RequirementVersionHistoryItem } from '../../../models/governance.model';
 
 @Component({
   selector: 'app-version-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   template: `
-    <h2>Requirement Version History</h2>
+    <h2>{{ 'governance.versionHistory.title' | translate }}</h2>
     <table>
-      <tr><th>ID</th><th>Version</th><th>Status</th><th>Modified</th><th>By</th><th>Summary</th></tr>
+      <tr>
+        <th>{{ 'governance.versionHistory.id' | translate }}</th>
+        <th>{{ 'governance.versionHistory.version' | translate }}</th>
+        <th>{{ 'governance.versionHistory.status' | translate }}</th>
+        <th>{{ 'governance.versionHistory.modified' | translate }}</th>
+        <th>{{ 'governance.versionHistory.by' | translate }}</th>
+        <th>{{ 'governance.versionHistory.summary' | translate }}</th>
+      </tr>
       <tr *ngFor="let item of rows()">
         <td>{{ item.requirementId }}</td><td>{{ item.version }}</td><td>{{ item.approvalStatus }}</td>
         <td>{{ item.modifiedAt }}</td><td>{{ item.modifiedBy }}</td><td>{{ item.changeSummary }}</td>
       </tr>
     </table>
-    <button (click)="exportCsv()">Export CSV</button>
+    <button (click)="exportCsv()">{{ 'governance.versionHistory.exportCsv' | translate }}</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

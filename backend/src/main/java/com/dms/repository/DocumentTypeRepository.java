@@ -16,8 +16,8 @@ public interface DocumentTypeRepository extends JpaRepository<DocumentType, UUID
     
     Optional<DocumentType> findByNameAndTenantId(String name, UUID tenantId);
     
-    Page<DocumentType> findByTenantIdAndIsActive(UUID tenantId, boolean isActive, Pageable pageable);
-    
-    List<DocumentType> findByTenantIdAndIsActive(UUID tenantId, boolean isActive);
+    Page<DocumentType> findByTenantId(UUID tenantId, Pageable pageable);
+
+    List<DocumentType> findByTenantId(UUID tenantId);
 }
 

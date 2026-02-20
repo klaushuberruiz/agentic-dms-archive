@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,7 +26,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
 
-    @Value("${dms.rate-limit.max-requests-per-minute:100}")
+    @Value("${dms.rate-limit.requests-per-minute:100}")
     private int maxRequestsPerMinute;
 
     private final ConcurrentHashMap<String, WindowCounter> counters = new ConcurrentHashMap<>();
@@ -62,8 +63,17 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private String resolveKey() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String user = authentication != null ? authentication.getName() : "anonymous";
-        Object tenantClaim = authentication != null ? authentication.getDetails() : null;
-        return user + ":" + String.valueOf(tenantClaim);
+        String tenant = "default";
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            String tenantId = jwtAuth.getToken().getClaimAsString("tenant_id");
+            if (tenantId == null || tenantId.isBlank()) {
+                tenantId = jwtAuth.getToken().getClaimAsString("tid");
+            }
+            if (tenantId != null && !tenantId.isBlank()) {
+                tenant = tenantId;
+            }
+        }
+        return user + ":" + tenant;
     }
 
     private record WindowCounter(long minute, AtomicInteger count) {

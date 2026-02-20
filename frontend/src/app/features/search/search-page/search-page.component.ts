@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { SearchService } from '../../../services/search.service';
 import { Document } from '../../../models/document.model';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -10,13 +11,13 @@ import { buildSearchRequest } from '../search-request.util';
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AdvancedSearchComponent],
+  imports: [CommonModule, ReactiveFormsModule, AdvancedSearchComponent, TranslateModule],
   template: `
     <section>
-      <h2>Search</h2>
+      <h2>{{ 'search.title' | translate }}</h2>
       <form [formGroup]="queryForm" (ngSubmit)="search()">
-        <input formControlName="query" placeholder="Search text" />
-        <button type="submit">Search</button>
+        <input formControlName="query" [attr.placeholder]="'search.searchText' | translate" />
+        <button type="submit">{{ 'common.search' | translate }}</button>
       </form>
       <app-advanced-search (filtersChanged)="applyFilters($event)" />
       <ul>
@@ -24,7 +25,7 @@ import { buildSearchRequest } from '../search-request.util';
           <label><input type="checkbox" [value]="doc.id" (change)="toggleSelection(doc.id, $event)"/>{{ doc.id }}</label>
         </li>
       </ul>
-      <button (click)="downloadSelected()">Bulk download</button>
+      <button (click)="downloadSelected()">{{ 'search.bulkDownload' | translate }}</button>
     </section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

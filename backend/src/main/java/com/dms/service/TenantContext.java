@@ -25,7 +25,11 @@ public class TenantContext {
                 tenantId = jwtAuth.getToken().getClaimAsString("tid");
             }
             if (tenantId != null && !tenantId.isBlank()) {
-                return UUID.fromString(tenantId);
+                try {
+                    return UUID.fromString(tenantId);
+                } catch (IllegalArgumentException ignored) {
+                    // fall back to configured default tenant when claim format is invalid
+                }
             }
         }
 

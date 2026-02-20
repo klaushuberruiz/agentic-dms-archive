@@ -1,7 +1,9 @@
 package com.dms.controller;
 
+import com.dms.dto.request.HybridSearchRequest;
 import com.dms.dto.response.HybridSearchResult;
 import com.dms.service.HybridSearchService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,25 +33,10 @@ public class HybridSearchController {
     @PostMapping
     @PreAuthorize("hasRole('DOCUMENT_USER')")
     public ResponseEntity<Page<HybridSearchResult>> hybridSearchPost(
-            @RequestBody HybridSearchRequest request,
+            @Valid @RequestBody HybridSearchRequest request,
             Pageable pageable) {
         log.info("Hybrid search POST request: query={}", request.getQuery());
         Page<HybridSearchResult> results = hybridSearchService.hybridSearch(request.getQuery(), pageable);
         return ResponseEntity.ok(results);
-    }
-    
-    public static class HybridSearchRequest {
-        public String query;
-        public String[] filterTags;
-        public boolean includeVectorSearch;
-        
-        public String getQuery() { return query; }
-        public void setQuery(String query) { this.query = query; }
-        
-        public String[] getFilterTags() { return filterTags; }
-        public void setFilterTags(String[] filterTags) { this.filterTags = filterTags; }
-        
-        public boolean isIncludeVectorSearch() { return includeVectorSearch; }
-        public void setIncludeVectorSearch(boolean includeVectorSearch) { this.includeVectorSearch = includeVectorSearch; }
     }
 }

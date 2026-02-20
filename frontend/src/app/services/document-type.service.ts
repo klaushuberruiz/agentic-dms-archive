@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DocumentType } from '../models/document-type.model';
+import { PageResponse } from '../models/api.model';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentTypeService {
@@ -10,10 +11,10 @@ export class DocumentTypeService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(page = 0, pageSize = 20): Observable<any> {
-    return this.http.get<any>(this.baseUrl, {
+  list(page = 0, pageSize = 20): Observable<DocumentType[]> {
+    return this.http.get<PageResponse<DocumentType> | DocumentType[]>(this.baseUrl, {
       params: { page, pageSize },
-    });
+    }).pipe(map((response) => (Array.isArray(response) ? response : (response.content ?? []))));
   }
 
   getActive(): Observable<DocumentType[]> {

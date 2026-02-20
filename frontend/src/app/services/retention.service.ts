@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { RetentionCleanupResult, RetentionCounts, RetentionStatus } from '../models/retention.model';
 
 @Injectable({ providedIn: 'root' })
 export class RetentionService {
@@ -10,8 +11,8 @@ export class RetentionService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getRetentionStatus(documentId: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${documentId}/retention-status`);
+  getRetentionStatus(documentId: string): Observable<RetentionStatus> {
+    return this.http.get<RetentionStatus>(`${this.baseUrl}/${documentId}/retention-status`);
   }
 
   setRetention(documentId: string, retentionDays: number): Observable<void> {
@@ -20,11 +21,11 @@ export class RetentionService {
     });
   }
 
-  getRetentionCounts(): Observable<any> {
-    return this.http.get<any>(`${this.adminUrl}/retention/count`);
+  getRetentionCounts(): Observable<RetentionCounts> {
+    return this.http.get<RetentionCounts>(`${this.adminUrl}/retention/count`);
   }
 
-  triggerRetentionCleanup(): Observable<any> {
-    return this.http.post<any>(`${this.adminUrl}/retention/process`, {});
+  triggerRetentionCleanup(): Observable<RetentionCleanupResult> {
+    return this.http.post<RetentionCleanupResult>(`${this.adminUrl}/retention/process`, {});
   }
 }

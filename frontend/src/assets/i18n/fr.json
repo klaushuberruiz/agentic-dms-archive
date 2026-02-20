@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "Systeme de gestion documentaire"
+  },
+  "common": {
+    "language": "Langue",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "refresh": "Actualiser",
+    "user": "Utilisateur",
+    "none": "aucun",
+    "from": "De",
+    "to": "A",
+    "module": "Module",
+    "action": "Action"
+  },
+  "unauthorized": {
+    "title": "Non autorise",
+    "message": "Vous devez vous connecter pour acceder a cette zone."
+  },
+  "documents": {
+    "list": {
+      "title": "Tableau de bord des documents",
+      "subtitle": "Parcourez et gerez vos documents recents.",
+      "uploadDocument": "Televerser un document",
+      "loading": "Chargement des documents...",
+      "empty": "Aucun document trouve.",
+      "version": "Version",
+      "size": "Taille",
+      "bytes": "octets",
+      "created": "Cree",
+      "errors": {
+        "loadFailed": "Impossible de charger les documents depuis le backend (erreur API)."
+      }
+    },
+    "detail": {
+      "title": "Detail du document",
+      "id": "ID",
+      "version": "Version",
+      "createdBy": "Cree par",
+      "createdAt": "Cree le",
+      "saveMetadata": "Enregistrer les metadonnees",
+      "loading": "Chargement du document...",
+      "metadata": "Metadonnees",
+      "versionHistory": "Historique des versions",
+      "legalHoldStatus": "Statut de conservation legale",
+      "download": "Telecharger",
+      "preview": "Apercu",
+      "editMetadata": "Modifier les metadonnees",
+      "uploadNewVersion": "Televerser une nouvelle version",
+      "softDelete": "Suppression logique",
+      "restore": "Restaurer"
+    },
+    "preview": {
+      "title": "Apercu du document",
+      "iframeTitle": "Apercu PDF"
+    },
+    "upload": {
+      "title": "Televerser un document",
+      "documentTypeId": "ID du type de document",
+      "metadataJson": "JSON des metadonnees",
+      "dropZone": "Glissez-deposez le PDF ici",
+      "selectedFile": "Selectionne: {{fileName}}",
+      "submit": "Televerser"
+    }
+  },
+  "search": {
+    "title": "Recherche",
+    "searchText": "Texte de recherche",
+    "bulkDownload": "Telechargement en masse",
+    "documentType": "Type de document",
+    "metadataKey": "Cle de metadonnees",
+    "metadataValue": "Valeur de metadonnees",
+    "applyFilters": "Appliquer les filtres"
+  },
+  "admin": {
+    "documentTypes": {
+      "title": "Types de document",
+      "name": "Nom",
+      "displayName": "Nom d'affichage",
+      "jsonSchema": "Schema JSON",
+      "retentionDays": "Jours de retention",
+      "allowedGroups": "Groupes autorises (separes par des virgules)"
+    },
+    "groups": {
+      "title": "Groupes",
+      "name": "Nom",
+      "description": "Description",
+      "parent": "Parent",
+      "createGroup": "Creer un groupe"
+    },
+    "retention": {
+      "title": "Gestion de la retention",
+      "expiredDocuments": "Documents expires",
+      "documentsWithActiveLegalHolds": "Documents avec conservation legale active",
+      "runCleanup": "Lancer le nettoyage",
+      "upcomingExpiration": "Les documents proches de l'expiration seront listes ici.",
+      "policyOverview": "Apercu des politiques par type de document."
+    },
+    "auditLogs": {
+      "title": "Journaux d'audit",
+      "exportCsv": "Exporter CSV",
+      "exportJson": "Exporter JSON"
+    }
+  },
+  "legal": {
+    "holds": {
+      "title": "Conservations legales",
+      "caseReference": "Reference du dossier",
+      "documentId": "ID du document",
+      "reason": "Motif",
+      "documentIds": "IDs des documents (separes par des virgules)",
+      "placeHold": "Appliquer",
+      "release": "Liberer",
+      "releaseHold": "Liberer la conservation",
+      "bulkInfo": "Les operations de masse sont prises en charge via la liste d'IDs."
+    }
+  },
+  "governance": {
+    "versionHistory": {
+      "title": "Historique des versions d'exigences",
+      "id": "ID",
+      "version": "Version",
+      "status": "Statut",
+      "modified": "Modifie",
+      "by": "Par",
+      "summary": "Resume",
+      "exportCsv": "Exporter CSV"
+    },
+    "traceability": {
+      "title": "Tableau de tracabilite",
+      "approvalStatus": "Statut d'approbation",
+      "missingOnly": "Seulement sans implementation",
+      "missing": "manquant",
+      "exportCsv": "Exporter CSV"
+    },
+    "retrievalAudit": {
+      "title": "Tableau d'audit de consultation",
+      "requirementId": "ID de l'exigence",
+      "description": "Suit la frequence de consultation et les evenements d'audit.",
+      "rolesInfo": "Visible uniquement pour compliance officer ou administrateur."
+    }
+  }
+}

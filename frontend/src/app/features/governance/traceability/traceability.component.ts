@@ -1,23 +1,24 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { TraceabilityItem } from '../../../models/governance.model';
 
 @Component({
   selector: 'app-traceability',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
-    <h2>Traceability Dashboard</h2>
+    <h2>{{ 'governance.traceability.title' | translate }}</h2>
     <form [formGroup]="filters">
-      <input formControlName="module" placeholder="Module" />
-      <input formControlName="approvalStatus" placeholder="Approval status" />
-      <label><input type="checkbox" formControlName="missingOnly" />Missing implementation only</label>
+      <input formControlName="module" [attr.placeholder]="'common.module' | translate" />
+      <input formControlName="approvalStatus" [attr.placeholder]="'governance.traceability.approvalStatus' | translate" />
+      <label><input type="checkbox" formControlName="missingOnly" />{{ 'governance.traceability.missingOnly' | translate }}</label>
     </form>
     <ul>
-      <li *ngFor="let row of rows()">{{ row.requirementId }} → {{ row.codePath }} (missing: {{ !row.hasImplementation }})</li>
+      <li *ngFor="let row of rows()">{{ row.requirementId }} -> {{ row.codePath }} ({{ 'governance.traceability.missing' | translate }}: {{ !row.hasImplementation }})</li>
     </ul>
-    <button (click)="exportCsv()">Export CSV</button>
+    <button (click)="exportCsv()">{{ 'governance.traceability.exportCsv' | translate }}</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -4,8 +4,9 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.time.Instant;
@@ -15,7 +16,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "documents")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -43,9 +45,15 @@ public class Document {
     
     @Column(name = "file_size_bytes", nullable = false)
     private Long fileSizeBytes;
-    
+
     @Column(name = "content_type", nullable = false)
     private String contentType;
+
+    @Column(name = "content_hash")
+    private String contentHash;
+
+    @Column(name = "idempotency_key")
+    private String idempotencyKey;
     
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -64,22 +72,20 @@ public class Document {
     
     @Column(name = "deleted_by")
     private String deletedBy;
-    
+
+    @Column(name = "delete_reason", columnDefinition = "TEXT")
+    private String deleteReason;
+
     @Column(name = "retention_expires_at", nullable = false)
     private Instant retentionExpiresAt;
+
+    @Version
+    @Column(name = "entity_version", nullable = false)
+    private Long entityVersion;
     
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
     private List<DocumentVersion> versions;
     
     @OneToMany(mappedBy = "document")
     private List<LegalHold> legalHolds;
-    
-    public boolean isDeleted() {
-        return deletedAt != null;
-    }
-    
-    public boolean hasActiveLegalHold() {
-        return legalHolds != null && 
-               legalHolds.stream().anyMatch(h -> h.getReleasedAt() == null);
-    }
 }

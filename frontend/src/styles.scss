@@ -3,7 +3,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  font-family: var(--md-sys-typescale-body-large-font, Roboto, "Helvetica Neue", sans-serif);
-  background: var(--surface-ground, #fafafa);
-  color: var(--md-sys-color-on-surface, #1c1b1f);
+  font-family: var(--md-sys-typescale-body-large-font);
+  background: var(--surface-ground);
+  color: var(--md-sys-color-on-surface);
 }

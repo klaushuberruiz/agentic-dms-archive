@@ -16,9 +16,13 @@ public interface GroupRepository extends JpaRepository<Group, UUID> {
     List<Group> findAllByTenantId(UUID tenantId);
     
     Optional<Group> findByNameAndTenantId(String name, UUID tenantId);
+
+    Optional<Group> findByIdAndTenantId(UUID id, UUID tenantId);
     
     Page<Group> findByTenantId(UUID tenantId, Pageable pageable);
     
     List<Group> findByParentGroupId(UUID parentGroupId);
+
+    long countByParentGroupId(UUID parentGroupId);
 }
 

@@ -3,15 +3,17 @@ package com.dms.domain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "legal_holds")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -47,4 +49,8 @@ public class LegalHold {
     
     @Column(name = "release_reason", columnDefinition = "TEXT")
     private String releaseReason;
+
+    @Version
+    @Column(name = "entity_version", nullable = false)
+    private Long entityVersion;
 }

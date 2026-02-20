@@ -8,6 +8,9 @@ import com.dms.exception.UnauthorizedAccessException;
 import com.dms.repository.GroupRepository;
 import com.dms.repository.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
@@ -28,6 +31,12 @@ public class AuthorizationService {
     private final GroupRepository groupRepository;
 
     public void assertCanAccessDocument(Document document) {
+        if (!canAccessDocument(document)) {
+            throw new UnauthorizedAccessException("User not authorized for document");
+        }
+    }
+
+    public boolean canAccessDocument(Document document) {
         UUID tenantId = tenantContext.getCurrentTenantId();
         String userId = tenantContext.getCurrentUserId();
 
@@ -37,15 +46,29 @@ public class AuthorizationService {
 
         UUID[] allowedGroups = document.getDocumentType().getAllowedGroups();
         if (allowedGroups == null || allowedGroups.length == 0) {
-            return;
+            return true;
         }
 
         Set<UUID> effectiveGroupIds = resolveEffectiveUserGroups(tenantId, userId);
-        boolean authorized = Arrays.stream(allowedGroups).anyMatch(effectiveGroupIds::contains);
+        return Arrays.stream(allowedGroups).anyMatch(effectiveGroupIds::contains);
+    }
 
-        if (!authorized) {
-            throw new UnauthorizedAccessException("User not authorized for document type");
+    public boolean canUploadToType(UUID[] allowedGroups) {
+        UUID tenantId = tenantContext.getCurrentTenantId();
+        String userId = tenantContext.getCurrentUserId();
+        if (allowedGroups == null || allowedGroups.length == 0) {
+            return true;
         }
+        Set<UUID> effectiveGroupIds = resolveEffectiveUserGroups(tenantId, userId);
+        return Arrays.stream(allowedGroups).anyMatch(effectiveGroupIds::contains);
+    }
+
+    public boolean canDeleteDocument(Document document) {
+        return canAccessDocument(document) && (hasRole("ADMIN") || hasRole("DOCUMENT_ADMIN"));
+    }
+
+    public boolean canViewAuditLogs() {
+        return hasRole("ADMIN") || hasRole("COMPLIANCE_OFFICER");
     }
 
     Set<UUID> resolveEffectiveUserGroups(UUID tenantId, String userId) {
@@ -71,5 +94,19 @@ public class AuthorizationService {
         }
 
         return effective;
+    }
+
+    private boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        String expected = "ROLE_" + role;
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (expected.equalsIgnoreCase(authority.getAuthority())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

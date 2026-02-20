@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "Sistema di gestione documentale"
+  },
+  "common": {
+    "language": "Lingua",
+    "save": "Salva",
+    "search": "Cerca",
+    "refresh": "Aggiorna",
+    "user": "Utente",
+    "none": "nessuno",
+    "from": "Da",
+    "to": "A",
+    "module": "Modulo",
+    "action": "Azione"
+  },
+  "unauthorized": {
+    "title": "Non autorizzato",
+    "message": "Devi accedere per visualizzare quest'area."
+  },
+  "documents": {
+    "list": {
+      "title": "Dashboard documenti",
+      "subtitle": "Sfoglia e gestisci i tuoi documenti piu recenti.",
+      "uploadDocument": "Carica documento",
+      "loading": "Caricamento documenti...",
+      "empty": "Nessun documento trovato.",
+      "version": "Versione",
+      "size": "Dimensione",
+      "bytes": "byte",
+      "created": "Creato",
+      "errors": {
+        "loadFailed": "Impossibile caricare i documenti dal backend (errore API)."
+      }
+    },
+    "detail": {
+      "title": "Dettaglio documento",
+      "id": "ID",
+      "version": "Versione",
+      "createdBy": "Creato da",
+      "createdAt": "Creato il",
+      "saveMetadata": "Salva metadati",
+      "loading": "Caricamento documento...",
+      "metadata": "Metadati",
+      "versionHistory": "Cronologia versioni",
+      "legalHoldStatus": "Stato conservazione legale",
+      "download": "Scarica",
+      "preview": "Anteprima",
+      "editMetadata": "Modifica metadati",
+      "uploadNewVersion": "Carica nuova versione",
+      "softDelete": "Eliminazione logica",
+      "restore": "Ripristina"
+    },
+    "preview": {
+      "title": "Anteprima documento",
+      "iframeTitle": "Anteprima PDF"
+    },
+    "upload": {
+      "title": "Carica documento",
+      "documentTypeId": "ID tipo documento",
+      "metadataJson": "JSON metadati",
+      "dropZone": "Trascina qui il PDF",
+      "selectedFile": "Selezionato: {{fileName}}",
+      "submit": "Carica"
+    }
+  },
+  "search": {
+    "title": "Ricerca",
+    "searchText": "Testo di ricerca",
+    "bulkDownload": "Download massivo",
+    "documentType": "Tipo documento",
+    "metadataKey": "Chiave metadato",
+    "metadataValue": "Valore metadato",
+    "applyFilters": "Applica filtri"
+  },
+  "admin": {
+    "documentTypes": {
+      "title": "Tipi documento",
+      "name": "Nome",
+      "displayName": "Nome visualizzato",
+      "jsonSchema": "Schema JSON",
+      "retentionDays": "Giorni di conservazione",
+      "allowedGroups": "Gruppi consentiti (separati da virgola)"
+    },
+    "groups": {
+      "title": "Gruppi",
+      "name": "Nome",
+      "description": "Descrizione",
+      "parent": "Padre",
+      "createGroup": "Crea gruppo"
+    },
+    "retention": {
+      "title": "Gestione conservazione",
+      "expiredDocuments": "Documenti scaduti",
+      "documentsWithActiveLegalHolds": "Documenti con conservazione legale attiva",
+      "runCleanup": "Esegui pulizia",
+      "upcomingExpiration": "I documenti in scadenza verranno elencati qui.",
+      "policyOverview": "Panoramica policy di conservazione per tipo documento."
+    },
+    "auditLogs": {
+      "title": "Log di audit",
+      "exportCsv": "Esporta CSV",
+      "exportJson": "Esporta JSON"
+    }
+  },
+  "legal": {
+    "holds": {
+      "title": "Blocchi legali",
+      "caseReference": "Riferimento caso",
+      "documentId": "ID documento",
+      "reason": "Motivo",
+      "documentIds": "ID documenti (separati da virgola)",
+      "placeHold": "Applica blocco",
+      "release": "Rilascia",
+      "releaseHold": "Rilascia blocco",
+      "bulkInfo": "Operazioni massive supportate tramite elenco ID documenti."
+    }
+  },
+  "governance": {
+    "versionHistory": {
+      "title": "Storico versioni requisiti",
+      "id": "ID",
+      "version": "Versione",
+      "status": "Stato",
+      "modified": "Modificato",
+      "by": "Da",
+      "summary": "Riepilogo",
+      "exportCsv": "Esporta CSV"
+    },
+    "traceability": {
+      "title": "Dashboard tracciabilita",
+      "approvalStatus": "Stato approvazione",
+      "missingOnly": "Solo senza implementazione",
+      "missing": "mancante",
+      "exportCsv": "Esporta CSV"
+    },
+    "retrievalAudit": {
+      "title": "Dashboard audit di recupero",
+      "requirementId": "ID requisito",
+      "description": "Traccia frequenza di recupero requisiti ed eventi audit.",
+      "rolesInfo": "Visibile solo a compliance officer o amministratore."
+    }
+  }
+}

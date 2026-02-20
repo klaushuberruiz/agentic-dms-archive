@@ -1,0 +1,3 @@
+# gitleaks configuration (used by CI secret-scan job)
+[rules]
+allowlist = []

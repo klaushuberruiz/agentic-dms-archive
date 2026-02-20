@@ -38,7 +38,7 @@ public class RetentionService {
             .findByIdAndTenantId(documentId, tenantId)
             .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
         
-        if (document.isDeleted()) {
+        if (document.getDeletedAt() != null) {
             throw new ValidationException("Cannot set retention on deleted document");
         }
         
@@ -70,8 +70,8 @@ public class RetentionService {
             .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
         
         DocumentType docType = document.getDocumentType();
-        if (docType.getDefaultRetentionDays() != null && docType.getDefaultRetentionDays() > 0) {
-            markForDeletion(documentId, docType.getDefaultRetentionDays());
+        if (docType.getRetentionDays() != null && docType.getRetentionDays() > 0) {
+            markForDeletion(documentId, docType.getRetentionDays());
         }
     }
     
@@ -99,12 +99,12 @@ public class RetentionService {
         return RetentionStatusResponse.builder()
             .documentId(documentId)
             .documentType(document.getDocumentType().getName())
-            .defaultRetentionDays(document.getDocumentType().getDefaultRetentionDays())
+            .defaultRetentionDays(document.getDocumentType().getRetentionDays())
             .retentionExpiresAt(retentionExpiresAt)
             .daysUntilRetention(daysUntilRetention)
             .hasActiveLegalHolds(hasActiveLegalHolds)
             .isEligibleForHardDelete(isEligibleForHardDelete)
-            .isSoftDeleted(document.isDeleted())
+            .isSoftDeleted(document.getDeletedAt() != null)
             .build();
     }
     

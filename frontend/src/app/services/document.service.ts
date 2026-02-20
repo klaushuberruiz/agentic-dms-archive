@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Document } from '../models/document.model';
+import { Document, VersionHistory } from '../models/document.model';
 import { SearchResult } from '../models/search.model';
 
 @Injectable({ providedIn: 'root' })
@@ -12,20 +12,29 @@ export class DocumentService {
   constructor(private readonly http: HttpClient) {}
 
   list(page = 0, pageSize = 20): Observable<SearchResult> {
-    return this.http.get<SearchResult>(this.baseUrl, {
+    return this.http.get<{ content: Document[]; totalElements: number; number: number; size: number; totalPages: number }>(this.baseUrl, {
       params: { page, pageSize },
+    }).pipe(map((response) => ({
+      results: response.content ?? [],
+      totalCount: response.totalElements ?? 0,
+      page: response.number ?? page,
+      pageSize: response.size ?? pageSize,
+      totalPages: response.totalPages ?? 0,
+    })));
+  }
+
+  upload(request: { documentTypeId: string; metadata: Record<string, unknown>; idempotencyKey?: string }, file: File): Observable<HttpEvent<Document>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+    return this.http.post<Document>(this.baseUrl, formData, {
+      reportProgress: true,
+      observe: 'events',
     });
   }
 
   getById(documentId: string): Observable<Document> {
     return this.http.get<Document>(`${this.baseUrl}/${documentId}`);
-  }
-
-  upload(formData: FormData): Observable<HttpEvent<Document>> {
-    return this.http.post<Document>(this.baseUrl, formData, {
-      reportProgress: true,
-      observe: 'events',
-    });
   }
 
   updateMetadata(documentId: string, metadata: Record<string, unknown>): Observable<Document> {
@@ -40,8 +49,8 @@ export class DocumentService {
     return this.http.get(`${this.baseUrl}/${documentId}/preview`, { responseType: 'blob' });
   }
 
-  getVersions(documentId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${documentId}/versions`);
+  getVersions(documentId: string): Observable<VersionHistory[]> {
+    return this.http.get<VersionHistory[]>(`${this.baseUrl}/${documentId}/versions`);
   }
 
   uploadNewVersion(documentId: string, file: File): Observable<HttpEvent<Document>> {
@@ -58,7 +67,10 @@ export class DocumentService {
   }
 
   softDelete(documentId: string, reason?: string): Observable<void> {
-    const params = reason ? { reason } : {};
+    let params = new HttpParams();
+    if (reason) {
+      params = params.set('reason', reason);
+    }
     return this.http.delete<void>(`${this.baseUrl}/${documentId}`, { params });
   }
 
@@ -66,7 +78,7 @@ export class DocumentService {
     return this.http.delete<void>(`${this.baseUrl}/${documentId}/hard`);
   }
 
-  restore(documentId: string): Observable<Document> {
-    return this.http.post<Document>(`${this.baseUrl}/${documentId}/restore`, {});
+  restore(documentId: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${documentId}/restore`, {});
   }
 }

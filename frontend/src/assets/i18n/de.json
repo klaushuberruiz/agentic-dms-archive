@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "Dokumentenverwaltungssystem"
+  },
+  "common": {
+    "language": "Sprache",
+    "save": "Speichern",
+    "search": "Suchen",
+    "refresh": "Aktualisieren",
+    "user": "Benutzer",
+    "none": "keine",
+    "from": "Von",
+    "to": "Bis",
+    "module": "Modul",
+    "action": "Aktion"
+  },
+  "unauthorized": {
+    "title": "Nicht autorisiert",
+    "message": "Sie mussen sich anmelden, um auf diesen Bereich zuzugreifen."
+  },
+  "documents": {
+    "list": {
+      "title": "Dokumenten-Dashboard",
+      "subtitle": "Durchsuchen und verwalten Sie Ihre neuesten Dokumente.",
+      "uploadDocument": "Dokument hochladen",
+      "loading": "Dokumente werden geladen...",
+      "empty": "Keine Dokumente gefunden.",
+      "version": "Version",
+      "size": "Groesse",
+      "bytes": "Byte",
+      "created": "Erstellt",
+      "errors": {
+        "loadFailed": "Dokumente konnten nicht vom Backend geladen werden (API-Fehler)."
+      }
+    },
+    "detail": {
+      "title": "Dokumentdetails",
+      "id": "ID",
+      "version": "Version",
+      "createdBy": "Erstellt von",
+      "createdAt": "Erstellt am",
+      "saveMetadata": "Metadaten speichern",
+      "loading": "Dokument wird geladen...",
+      "metadata": "Metadaten",
+      "versionHistory": "Versionsverlauf",
+      "legalHoldStatus": "Legal-Hold-Status",
+      "download": "Herunterladen",
+      "preview": "Vorschau",
+      "editMetadata": "Metadaten bearbeiten",
+      "uploadNewVersion": "Neue Version hochladen",
+      "softDelete": "Soft loeschen",
+      "restore": "Wiederherstellen"
+    },
+    "preview": {
+      "title": "Dokumentvorschau",
+      "iframeTitle": "PDF-Vorschau"
+    },
+    "upload": {
+      "title": "Dokument hochladen",
+      "documentTypeId": "Dokumenttyp-ID",
+      "metadataJson": "Metadaten-JSON",
+      "dropZone": "PDF hier ablegen",
+      "selectedFile": "Ausgewaehlt: {{fileName}}",
+      "submit": "Hochladen"
+    }
+  },
+  "search": {
+    "title": "Suche",
+    "searchText": "Suchtext",
+    "bulkDownload": "Massen-Download",
+    "documentType": "Dokumenttyp",
+    "metadataKey": "Metadaten-Schluessel",
+    "metadataValue": "Metadaten-Wert",
+    "applyFilters": "Filter anwenden"
+  },
+  "admin": {
+    "documentTypes": {
+      "title": "Dokumenttypen",
+      "name": "Name",
+      "displayName": "Anzeigename",
+      "jsonSchema": "JSON-Schema",
+      "retentionDays": "Aufbewahrungstage",
+      "allowedGroups": "Erlaubte Gruppen (kommagetrennt)"
+    },
+    "groups": {
+      "title": "Gruppen",
+      "name": "Name",
+      "description": "Beschreibung",
+      "parent": "Eltern",
+      "createGroup": "Gruppe erstellen"
+    },
+    "retention": {
+      "title": "Aufbewahrungsverwaltung",
+      "expiredDocuments": "Abgelaufene Dokumente",
+      "documentsWithActiveLegalHolds": "Dokumente mit aktivem Legal Hold",
+      "runCleanup": "Bereinigung starten",
+      "upcomingExpiration": "Dokumente mit bevorstehendem Ablauf werden hier angezeigt.",
+      "policyOverview": "Richtlinienueberblick pro Dokumenttyp."
+    },
+    "auditLogs": {
+      "title": "Audit-Protokolle",
+      "exportCsv": "CSV exportieren",
+      "exportJson": "JSON exportieren"
+    }
+  },
+  "legal": {
+    "holds": {
+      "title": "Legal Holds",
+      "caseReference": "Aktenzeichen",
+      "documentId": "Dokument-ID",
+      "reason": "Grund",
+      "documentIds": "Dokument-IDs (kommagetrennt)",
+      "placeHold": "Hold setzen",
+      "release": "Freigeben",
+      "releaseHold": "Hold aufheben",
+      "bulkInfo": "Bulk-Hold-Operationen werden ueber die Dokument-ID-Liste unterstuetzt."
+    }
+  },
+  "governance": {
+    "versionHistory": {
+      "title": "Anforderungs-Versionsverlauf",
+      "id": "ID",
+      "version": "Version",
+      "status": "Status",
+      "modified": "Geaendert",
+      "by": "Von",
+      "summary": "Zusammenfassung",
+      "exportCsv": "CSV exportieren"
+    },
+    "traceability": {
+      "title": "Traceability-Dashboard",
+      "approvalStatus": "Freigabestatus",
+      "missingOnly": "Nur ohne Implementierung",
+      "missing": "fehlt",
+      "exportCsv": "CSV exportieren"
+    },
+    "retrievalAudit": {
+      "title": "Retrieval-Audit-Dashboard",
+      "requirementId": "Anforderungs-ID",
+      "description": "Verfolgt Abrufhaeufigkeit und Audit-Ereignisse von Anforderungen.",
+      "rolesInfo": "Nur sichtbar fuer Compliance Officer oder Administratoren."
+    }
+  }
+}

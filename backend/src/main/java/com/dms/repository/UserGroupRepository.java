@@ -13,7 +13,13 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, UUID> {
 
     List<UserGroup> findAllByTenantIdAndUserId(UUID tenantId, String userId);
     
-    Optional<UserGroup> findByUserIdAndGroupId(UUID userId, UUID groupId);
+    Optional<UserGroup> findByUserIdAndGroupId(String userId, UUID groupId);
     
     List<UserGroup> findByGroupId(UUID groupId);
+
+    List<UserGroup> findByGroupIdAndTenantId(UUID groupId, UUID tenantId);
+
+    long countByGroupId(UUID groupId);
+
+    Optional<UserGroup> findByTenantIdAndUserIdAndGroupId(UUID tenantId, String userId, UUID groupId);
 }

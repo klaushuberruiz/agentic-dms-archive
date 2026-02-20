@@ -14,3 +14,13 @@ export interface Document {
   deletedAt: string | null;
   deletedBy: string | null;
 }
+
+export interface VersionHistory {
+  documentId: string;
+  versionNumber: number;
+  blobPath: string;
+  fileSizeBytes: number;
+  contentHash: string | null;
+  createdBy: string;
+  createdAt: string;
+}

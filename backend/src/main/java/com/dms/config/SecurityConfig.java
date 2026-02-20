@@ -28,17 +28,34 @@ public class SecurityConfig {
     @Value("${dms.security.allowed-origins:http://localhost:4200}")
     private String[] allowedOrigins;
 
+    @Value("${dms.security.disable-auth:false}")
+    private boolean disableAuth;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                .anyRequest().authenticated())
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-            .addFilterAfter(rateLimitingFilter, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        if (disableAuth) {
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .anonymous(anonymous -> anonymous
+                    .principal("local-dev-user")
+                    .authorities(
+                        "ROLE_DOCUMENT_USER",
+                        "ROLE_ADMIN",
+                        "ROLE_COMPLIANCE_OFFICER",
+                        "ROLE_LEGAL_OFFICER",
+                        "ROLE_DOCUMENT_ADMIN"
+                    ));
+        } else {
+            http.authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                    .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        }
+
+        http.addFilterAfter(rateLimitingFilter, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class)
             .headers(headers -> headers
                 .addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy",
                     "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; frame-ancestors 'none'")));

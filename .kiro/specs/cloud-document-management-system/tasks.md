@@ -900,6 +900,8 @@ This plan implements a Cloud-Native DMS on Azure with Spring Boot 3.x backend, A
 - All backend tests use @ExtendWith(MockitoExtension.class) with constructor injection
 - Frontend tests use Vitest for pure functions, services, and data transformations
 - Coverage targets: 80% line / 75% branch for business logic
+<<<<<<< ours
+<<<<<<< ours
 
 ## Gap Remediation Tasks - COMPLETED (Post-Implementation Audit)
 
@@ -982,153 +984,153 @@ The following major features require implementation to meet requirements.md:
 
 ### Priority 1: Core Document Operations (CRITICAL)
 
-- [ ] 43 Complete DocumentService full implementation
-  - [ ] 43.1 Implement DocumentService.getDocument with authorization checks
-  - [ ] 43.2 Implement DocumentService.softDeleteDocument with legal hold validation
-  - [ ] 43.3 Implement DocumentService.restoreDocument with recovery window enforcement
-  - [ ] 43.4 Implement DocumentService.updateMetadata with schema validation and audit logging
-  - [ ] 43.5 Implement DocumentService.downloadDocument with streaming and SAS token generation
-  - [ ] 43.6 Implement DocumentService.previewDocument with authorization and audit logging
-  - [ ] 43.7 Complete remaining document query methods
+- [x] 43 Complete DocumentService full implementation
+  - [x] 43.1 Implement DocumentService.getDocument with authorization checks
+  - [x] 43.2 Implement DocumentService.softDeleteDocument with legal hold validation
+  - [x] 43.3 Implement DocumentService.restoreDocument with recovery window enforcement
+  - [x] 43.4 Implement DocumentService.updateMetadata with schema validation and audit logging
+  - [x] 43.5 Implement DocumentService.downloadDocument with streaming and SAS token generation
+  - [x] 43.6 Implement DocumentService.previewDocument with authorization and audit logging
+  - [x] 43.7 Complete remaining document query methods
   - _Requirements: 3.1-3.6, 4.1-4.5, 6.1-6.8_
 
-- [ ] 44 Complete DocumentController implementation (11 endpoints)
-  - [ ] 44.1 POST /api/v1/documents (upload) - wire to DocumentService.uploadDocument
-  - [ ] 44.2 GET /api/v1/documents/{id} - wire to DocumentService.getDocument
-  - [ ] 44.3 GET /api/v1/documents/{id}/download - wire to DocumentService.downloadDocument
-  - [ ] 44.4 GET /api/v1/documents/{id}/preview - wire to DocumentService.previewDocument
-  - [ ] 44.5 PUT /api/v1/documents/{id}/metadata - wire to DocumentService.updateMetadata
-  - [ ] 44.6 DELETE /api/v1/documents/{id} - wire to DocumentService.softDeleteDocument
-  - [ ] 44.7 POST /api/v1/documents/{id}/restore - wire to DocumentService.restoreDocument
-  - [ ] 44.8 DELETE /api/v1/documents/{id}/hard - wire to DocumentService.hardDeleteDocument
-  - [ ] 44.9 POST /api/v1/documents/bulk-download - wire to SearchService.bulkDownload
-  - [ ] 44.10 GET /api/v1/documents/{id}/versions - wire to VersioningService.getVersionHistory
-  - [ ] 44.11 POST /api/v1/documents/{id}/versions - wire to VersioningService.uploadNewVersion
+- [x] 44 Complete DocumentController implementation (11 endpoints)
+  - [x] 44.1 POST /api/v1/documents (upload) - wire to DocumentService.uploadDocument
+  - [x] 44.2 GET /api/v1/documents/{id} - wire to DocumentService.getDocument
+  - [x] 44.3 GET /api/v1/documents/{id}/download - wire to DocumentService.downloadDocument
+  - [x] 44.4 GET /api/v1/documents/{id}/preview - wire to DocumentService.previewDocument
+  - [x] 44.5 PUT /api/v1/documents/{id}/metadata - wire to DocumentService.updateMetadata
+  - [x] 44.6 DELETE /api/v1/documents/{id} - wire to DocumentService.softDeleteDocument
+  - [x] 44.7 POST /api/v1/documents/{id}/restore - wire to DocumentService.restoreDocument
+  - [x] 44.8 DELETE /api/v1/documents/{id}/hard - wire to DocumentService.hardDeleteDocument
+  - [x] 44.9 POST /api/v1/documents/bulk-download - wire to SearchService.bulkDownload
+  - [x] 44.10 GET /api/v1/documents/{id}/versions - wire to VersioningService.getVersionHistory
+  - [x] 44.11 POST /api/v1/documents/{id}/versions - wire to VersioningService.uploadNewVersion
   - _Requirements: 1.1, 3.1, 4.1, 5.1, 6.1, 7.6, 11.1_
 
-- [ ] 45 Implement VersioningService (5 methods)
-  - [ ] 45.1 VersioningService.uploadNewVersion - store new version blob, increment version number atomically
-  - [ ] 45.2 VersioningService.getVersionHistory - retrieve all versions in descending order
-  - [ ] 45.3 VersioningService.getVersionContent - retrieve specific version content
-  - [ ] 45.4 VersioningService.restoreVersion - create new version with previous version's content
-  - [ ] 45.5 Test all version operations for atomicity and immutability
+- [x] 45 Implement VersioningService (5 methods)
+  - [x] 45.1 VersioningService.uploadNewVersion - store new version blob, increment version number atomically
+  - [x] 45.2 VersioningService.getVersionHistory - retrieve all versions in descending order
+  - [x] 45.3 VersioningService.getVersionContent - retrieve specific version content
+  - [x] 45.4 VersioningService.restoreVersion - create new version with previous version's content
+  - [x] 45.5 Test all version operations for atomicity and immutability
   - _Requirements: 5.1-5.9_
 
 ### Priority 2: Search Operations
 
-- [ ] 46 Complete SearchController implementation (3 endpoints)
-  - [ ] 46.1 POST /api/v1/search - wire to SearchService.search with pagination
-  - [ ] 46.2 GET /api/v1/search/bulk-download - implement bulk download endpoint
-  - [ ] 46.3 Add all required filters: documentType, dateRange, metadata, pagination
+- [x] 46 Complete SearchController implementation (3 endpoints)
+  - [x] 46.1 POST /api/v1/search - wire to SearchService.search with pagination
+  - [x] 46.2 GET /api/v1/search/bulk-download - implement bulk download endpoint
+  - [x] 46.3 Add all required filters: documentType, dateRange, metadata, pagination
   - _Requirements: 2.1, 2.5, 2.8, 2.11, 11.1_
 
 ### Priority 3: Administration & Governance
 
-- [ ] 47 Implement DocumentTypeService (5+ methods)
-  - [ ] 47.1 DocumentTypeService.createDocumentType - validate name, check duplicates, persist
-  - [ ] 47.2 DocumentTypeService.updateDocumentType - partial updates with validation
-  - [ ] 47.3 DocumentTypeService.deactivateDocumentType - soft deactivation via isActive flag
-  - [ ] 47.4 DocumentTypeService.getActiveDocumentTypes - filtered list for users
-  - [ ] 47.5 DocumentTypeService.listDocumentTypes - paginated tenant-scoped results
-  - [ ] 47.6 Add audit logging for all create/update/deactivate operations
+- [x] 47 Implement DocumentTypeService (5+ methods)
+  - [x] 47.1 DocumentTypeService.createDocumentType - validate name, check duplicates, persist
+  - [x] 47.2 DocumentTypeService.updateDocumentType - partial updates with validation
+  - [x] 47.3 DocumentTypeService.deactivateDocumentType - soft deactivation via isActive flag
+  - [x] 47.4 DocumentTypeService.getActiveDocumentTypes - filtered list for users
+  - [x] 47.5 DocumentTypeService.listDocumentTypes - paginated tenant-scoped results
+  - [x] 47.6 Add audit logging for all create/update/deactivate operations
   - _Requirements: 13.1-13.6, 27.1-27.6_
 
-- [ ] 48 Implement DocumentTypeController (6 endpoints)
-  - [ ] 48.1 POST /api/v1/document-types - create document type
-  - [ ] 48.2 GET /api/v1/document-types - paginated list with pagination
-  - [ ] 48.3 GET /api/v1/document-types/active - list active types only
-  - [ ] 48.4 GET /api/v1/document-types/{typeId} - single retrieval with authorization
-  - [ ] 48.5 PUT /api/v1/document-types/{typeId} - update with validation
-  - [ ] 48.6 DELETE /api/v1/document-types/{typeId} - deactivate (soft delete)
+- [x] 48 Implement DocumentTypeController (6 endpoints)
+  - [x] 48.1 POST /api/v1/document-types - create document type
+  - [x] 48.2 GET /api/v1/document-types - paginated list with pagination
+  - [x] 48.3 GET /api/v1/document-types/active - list active types only
+  - [x] 48.4 GET /api/v1/document-types/{typeId} - single retrieval with authorization
+  - [x] 48.5 PUT /api/v1/document-types/{typeId} - update with validation
+  - [x] 48.6 DELETE /api/v1/document-types/{typeId} - deactivate (soft delete)
   - _Requirements: 13.1-13.6_
 
-- [ ] 49 Implement GroupService (8+ methods)
-  - [ ] 49.1 GroupService.createGroup - name validation, parent resolution, circular reference detection
-  - [ ] 49.2 GroupService.updateGroup - parent reassignment with cycle detection
-  - [ ] 49.3 GroupService.deleteGroup - prevent deletion if child groups or members exist
-  - [ ] 49.4 GroupService.addUserToGroup - membership creation with duplicate check
-  - [ ] 49.5 GroupService.removeUserFromGroup - membership deletion
-  - [ ] 49.6 GroupService.getGroupHierarchy - return self, children, parent chain
-  - [ ] 49.7 GroupService.getGroupMembers - paginated member list
-  - [ ] 49.8 Add audit logging for all group changes
+- [x] 49 Implement GroupService (8+ methods)
+  - [x] 49.1 GroupService.createGroup - name validation, parent resolution, circular reference detection
+  - [x] 49.2 GroupService.updateGroup - parent reassignment with cycle detection
+  - [x] 49.3 GroupService.deleteGroup - prevent deletion if child groups or members exist
+  - [x] 49.4 GroupService.addUserToGroup - membership creation with duplicate check
+  - [x] 49.5 GroupService.removeUserFromGroup - membership deletion
+  - [x] 49.6 GroupService.getGroupHierarchy - return self, children, parent chain
+  - [x] 49.7 GroupService.getGroupMembers - paginated member list
+  - [x] 49.8 Add audit logging for all group changes
   - _Requirements: 16.1-16.9, 27.4_
 
-- [ ] 50 Implement GroupController (9 endpoints)
-  - [ ] 50.1 POST /api/v1/groups - create group
-  - [ ] 50.2 GET /api/v1/groups - paginated list
-  - [ ] 50.3 GET /api/v1/groups/{groupId} - single retrieval
-  - [ ] 50.4 GET /api/v1/groups/{groupId}/hierarchy - with children + parent chain
-  - [ ] 50.5 PUT /api/v1/groups/{groupId} - update group
-  - [ ] 50.6 DELETE /api/v1/groups/{groupId} - delete group
-  - [ ] 50.7 POST /api/v1/groups/{groupId}/members/{userId} - add member
-  - [ ] 50.8 DELETE /api/v1/groups/{groupId}/members/{userId} - remove member
-  - [ ] 50.9 GET /api/v1/groups/{groupId}/members - list members with pagination
+- [x] 50 Implement GroupController (9 endpoints)
+  - [x] 50.1 POST /api/v1/groups - create group
+  - [x] 50.2 GET /api/v1/groups - paginated list
+  - [x] 50.3 GET /api/v1/groups/{groupId} - single retrieval
+  - [x] 50.4 GET /api/v1/groups/{groupId}/hierarchy - with children + parent chain
+  - [x] 50.5 PUT /api/v1/groups/{groupId} - update group
+  - [x] 50.6 DELETE /api/v1/groups/{groupId} - delete group
+  - [x] 50.7 POST /api/v1/groups/{groupId}/members/{userId} - add member
+  - [x] 50.8 DELETE /api/v1/groups/{groupId}/members/{userId} - remove member
+  - [x] 50.9 GET /api/v1/groups/{groupId}/members - list members with pagination
   - _Requirements: 16.1-16.9_
 
-- [ ] 51 Implement AuditController (5+ endpoints)
-  - [ ] 51.1 GET /api/v1/audit/logs - paginated tenant audit trail with filtering
-  - [ ] 51.2 GET /api/v1/audit/logs/{logId} - detail view with authorization
-  - [ ] 51.3 GET /api/v1/audit/logs/document/{documentId} - document access timeline
-  - [ ] 51.4 GET /api/v1/audit/logs/user/{userId} - user action history
-  - [ ] 51.5 GET /api/v1/audit/statistics - aggregated metrics (document counts, actions, etc.)
-  - [ ] 51.6 POST /api/v1/audit/export - CSV/JSON export with filtering
+- [x] 51 Implement AuditController (5+ endpoints)
+  - [x] 51.1 GET /api/v1/audit/logs - paginated tenant audit trail with filtering
+  - [x] 51.2 GET /api/v1/audit/logs/{logId} - detail view with authorization
+  - [x] 51.3 GET /api/v1/audit/logs/document/{documentId} - document access timeline
+  - [x] 51.4 GET /api/v1/audit/logs/user/{userId} - user action history
+  - [x] 51.5 GET /api/v1/audit/statistics - aggregated metrics (document counts, actions, etc.)
+  - [x] 51.6 POST /api/v1/audit/export - CSV/JSON export with filtering
   - _Requirements: 9.7, 9.11, 17.1-17.7_
 
-- [ ] 52 Implement AdminController (6+ endpoints)
-  - [ ] 52.1 GET /api/v1/admin/status - system status (expired docs count, legal holds count)
-  - [ ] 52.2 POST /api/v1/admin/retention/process - manual cleanup trigger
-  - [ ] 52.3 GET /api/v1/admin/retention/count - retention statistics
-  - [ ] 52.4 GET /api/v1/admin/health - detailed service status
-  - [ ] 52.5 GET /api/v1/admin/outbox/dead-letters - list dead-lettered events
-  - [ ] 52.6 POST /api/v1/admin/outbox/dead-letters/{id}/replay - replay failed event
+- [x] 52 Implement AdminController (6+ endpoints)
+  - [x] 52.1 GET /api/v1/admin/status - system status (expired docs count, legal holds count)
+  - [x] 52.2 POST /api/v1/admin/retention/process - manual cleanup trigger
+  - [x] 52.3 GET /api/v1/admin/retention/count - retention statistics
+  - [x] 52.4 GET /api/v1/admin/health - detailed service status
+  - [x] 52.5 GET /api/v1/admin/outbox/dead-letters - list dead-lettered events
+  - [x] 52.6 POST /api/v1/admin/outbox/dead-letters/{id}/replay - replay failed event
   - _Requirements: 18.1-18.12, 29.3-29.4_
 
 ### Priority 4: Legal Hold & Security
 
-- [ ] 53 Implement LegalHoldService (8+ methods)
-  - [ ] 53.1 LegalHoldService.placeLegalHold - create hold with case reference and reason validation
-  - [ ] 53.2 LegalHoldService.releaseLegalHold - release hold with reason logging
-  - [ ] 53.3 LegalHoldService.getActiveLegalHolds - filter for releasedAt IS NULL
-  - [ ] 53.4 LegalHoldService.getLegalHoldHistory - complete audit trail per document
-  - [ ] 53.5 LegalHoldService.hasActiveLegalHolds - boolean check for deletion blocker
-  - [ ] 53.6 LegalHoldService.getDocumentsUnderHold - query with case reference filter
-  - [ ] 53.7 LegalHoldService.bulkPlaceHold - batch operations
-  - [ ] 53.8 LegalHoldService.bulkReleaseHold - batch operations
+- [x] 53 Implement LegalHoldService (8+ methods)
+  - [x] 53.1 LegalHoldService.placeLegalHold - create hold with case reference and reason validation
+  - [x] 53.2 LegalHoldService.releaseLegalHold - release hold with reason logging
+  - [x] 53.3 LegalHoldService.getActiveLegalHolds - filter for releasedAt IS NULL
+  - [x] 53.4 LegalHoldService.getLegalHoldHistory - complete audit trail per document
+  - [x] 53.5 LegalHoldService.hasActiveLegalHolds - boolean check for deletion blocker
+  - [x] 53.6 LegalHoldService.getDocumentsUnderHold - query with case reference filter
+  - [x] 53.7 LegalHoldService.bulkPlaceHold - batch operations
+  - [x] 53.8 LegalHoldService.bulkReleaseHold - batch operations
   - _Requirements: 10.1-10.10_
 
-- [ ] 54 Complete AuthorizationService implementation (4+ methods)
-  - [ ] 54.1 AuthorizationService.canAccessDocument - verify user group membership + tenant isolation
-  - [ ] 54.2 AuthorizationService.canUploadToType - check user in allowed groups for document type
-  - [ ] 54.3 AuthorizationService.canDeleteDocument - check for admin role + legal hold status
-  - [ ] 54.4 AuthorizationService.canViewAuditLogs - role-based permission check
+- [x] 54 Complete AuthorizationService implementation (4+ methods)
+  - [x] 54.1 AuthorizationService.canAccessDocument - verify user group membership + tenant isolation
+  - [x] 54.2 AuthorizationService.canUploadToType - check user in allowed groups for document type
+  - [x] 54.3 AuthorizationService.canDeleteDocument - check for admin role + legal hold status
+  - [x] 54.4 AuthorizationService.canViewAuditLogs - role-based permission check
   - _Requirements: 15.1-15.10_
 
 ### Priority 5: Backend Service Completeness
 
-- [ ] 55 Write comprehensive tests for all implemented services
-  - [ ] 55.1 Write unit tests for VersioningService (4+ test methods)
-  - [ ] 55.2 Write unit tests for GroupService (6+ test methods)
-  - [ ] 55.3 Write unit tests for DocumentTypeService (5+ test methods)
-  - [ ] 55.4 Write unit tests for LegalHoldService (6+ test methods)
-  - [ ] 55.5 Write unit tests for AuthorizationService (4+ test methods)
-  - [ ] 55.6 Write integration tests for all DocumentController endpoints
-  - [ ] 55.7 Write integration tests for GroupController operations
-  - [ ] 55.8 Write integration tests for DocumentTypeController operations
+- [x] 55 Write comprehensive tests for all implemented services
+  - [x] 55.1 Write unit tests for VersioningService (4+ test methods)
+  - [x] 55.2 Write unit tests for GroupService (6+ test methods)
+  - [x] 55.3 Write unit tests for DocumentTypeService (5+ test methods)
+  - [x] 55.4 Write unit tests for LegalHoldService (6+ test methods)
+  - [x] 55.5 Write unit tests for AuthorizationService (4+ test methods)
+  - [x] 55.6 Write integration tests for all DocumentController endpoints
+  - [x] 55.7 Write integration tests for GroupController operations
+  - [x] 55.8 Write integration tests for DocumentTypeController operations
   - _Requirements: 21.1-21.9_
 
 ### Priority 6: Frontend Component Implementation
 
-- [ ] 56 Implement missing frontend components (currently empty/scaffolded)
-  - [ ] 56.1 DocumentListComponent - full implementation with filtering
-  - [ ] 56.2 DocumentUploadComponent - drag-drop, metadata form, progress
-  - [ ] 56.3 DocumentDetailComponent - metadata display, actions, versioning
-  - [ ] 56.4 DocumentPreviewComponent - PDF viewer integration
-  - [ ] 56.5 SearchPageComponent - full-text search with filters
-  - [ ] 56.6 DocumentTypesComponent - admin CRUD interface
-  - [ ] 56.7 GroupsComponent - admin group management
-  - [ ] 56.8 AuditLogsComponent - audit trail viewer and export
-  - [ ] 56.9 RetentionComponent - retention policy viewer
-  - [ ] 56.10 LegalHoldsComponent - legal hold management
+- [x] 56 Implement missing frontend components (currently empty/scaffolded)
+  - [x] 56.1 DocumentListComponent - full implementation with filtering
+  - [x] 56.2 DocumentUploadComponent - drag-drop, metadata form, progress
+  - [x] 56.3 DocumentDetailComponent - metadata display, actions, versioning
+  - [x] 56.4 DocumentPreviewComponent - PDF viewer integration
+  - [x] 56.5 SearchPageComponent - full-text search with filters
+  - [x] 56.6 DocumentTypesComponent - admin CRUD interface
+  - [x] 56.7 GroupsComponent - admin group management
+  - [x] 56.8 AuditLogsComponent - audit trail viewer and export
+  - [x] 56.9 RetentionComponent - retention policy viewer
+  - [x] 56.10 LegalHoldsComponent - legal hold management
   - _Requirements: 22.1-22.10, 34.1-38.3_
 
 ## Implementation Summary
@@ -1176,3 +1178,60 @@ Frontend Tests:
   Tests: 7 passed
   Duration: 1.46s
 ```
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+
+## Requirement Coverage Gaps (Added)
+
+The following requirements from `requirements.md` are not explicitly represented by tasks above. Add/implement these to complete coverage:
+
+- [ ] RG1 Document download range + SAS streaming
+  - [ ] RG1.1 Implement HTTP Range support for downloads and previews (Requirement 3.5, 12.3)
+  - [ ] RG1.2 Stream via time-limited SAS tokens (Requirement 3.3, 12.5, 23.13)
+  - [ ] RG1.3 Log download before streaming begins (Requirement 3.4)
+
+- [ ] RG2 Bulk download constraints and reporting
+  - [ ] RG2.1 Enforce maximum documents per bulk download (Requirement 11.5)
+  - [ ] RG2.2 Exclude unauthorized docs with explicit exclusion reporting (Requirement 11.3)
+  - [ ] RG2.3 Stream ZIP generation for large archives (Requirement 11.6)
+
+- [ ] RG3 Soft-deleted admin inventory
+  - [ ] RG3.1 Add admin endpoint to list soft-deleted documents in tenant (Requirement 6.8)
+
+- [ ] RG4 Hard delete retention/legal-hold enforcement details
+  - [ ] RG4.1 Ensure retention-age validation before hard delete (Requirement 7.1)
+  - [ ] RG4.2 Delete all version blobs on hard delete (Requirement 7.3)
+  - [ ] RG4.3 Record hard delete in audit log with evidence (Requirement 7.4, 7.7)
+
+- [ ] RG5 Document type/group lifecycle constraints
+  - [ ] RG5.1 Prevent document type deletion when associated docs exist (Requirement 13.6)
+  - [ ] RG5.2 Prevent group deletion if assigned to document types (Requirement 16.6)
+
+- [ ] RG6 Access history filtering/export
+  - [ ] RG6.1 Filter access history by date range and action type (Requirement 17.4)
+  - [ ] RG6.2 Export access history for compliance reporting (Requirement 17.5)
+
+- [ ] RG7 Security hardening additions
+  - [ ] RG7.1 Log authentication failures with client IP (Requirement 23.9)
+  - [ ] RG7.2 Implement request signing between MCP server and API (Requirement 23.10)
+  - [ ] RG7.3 Malware scanning for uploads (Requirement 23.11)
+  - [ ] RG7.4 Key Vault secret retrieval enforced (Requirement 23.2)
+
+- [ ] RG8 Monitoring/metrics completeness
+  - [ ] RG8.1 Blob storage + PostgreSQL connectivity health checks with timeouts (Requirement 18.2, 18.3)
+  - [ ] RG8.2 /actuator/health/liveness and /readiness endpoints (Requirement 18.7, 18.8)
+  - [ ] RG8.3 Prometheus metrics endpoint and Azure Monitor integration (Requirement 18.6, 18.12)
+  - [ ] RG8.4 Metrics for upload/search latency + counts (Requirement 18.4, 18.5)
+
+- [ ] RG9 Backup/restore runbooks and DR validation
+  - [ ] RG9.1 Document backup/restore runbooks and quarterly DR drill evidence (Requirement 19.3, 19.9)
+  - [ ] RG9.2 Document RTO/RPO targets and validation steps (Requirement 19.6, 19.7)
+
+- [ ] RG10 SLA and performance controls
+  - [ ] RG10.1 Implement SLA instrumentation and SLO dashboards (Requirement 24.1-24.10)
+  - [ ] RG10.2 Add hybrid search perf metrics + cache policy (Requirement 25.1-25.15)
+
+- [ ] RG11 Traceability and context injection validation endpoint
+  - [ ] RG11.1 Provide requirement-ID validation endpoint for code comments (Requirement 2E.10)

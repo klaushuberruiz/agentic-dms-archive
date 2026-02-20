@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuditLog } from '../models/audit.model';
+import { PageResponse } from '../models/api.model';
+
+type AuditStatistics = Record<string, number | string | boolean | null>;
 
 @Injectable({ providedIn: 'root' })
 export class AuditService {
@@ -10,8 +13,22 @@ export class AuditService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getLogs(page = 0, pageSize = 50): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/logs`, {
+  search(filters: { action?: string; userId?: string }): Observable<AuditLog[]> {
+    let params = new HttpParams();
+    if (filters.action) {
+      params = params.set('action', filters.action);
+    }
+    if (filters.userId) {
+      params = params.set('userId', filters.userId);
+    }
+
+    return this.http
+      .get<{ content?: AuditLog[] } | AuditLog[]>(`${this.baseUrl}/logs`, { params })
+      .pipe(map((response) => (Array.isArray(response) ? response : (response.content ?? []))));
+  }
+
+  getLogs(page = 0, pageSize = 50): Observable<PageResponse<AuditLog> | AuditLog[]> {
+    return this.http.get<PageResponse<AuditLog> | AuditLog[]>(`${this.baseUrl}/logs`, {
       params: { page, pageSize },
     });
   }
@@ -20,29 +37,29 @@ export class AuditService {
     return this.http.get<AuditLog>(`${this.baseUrl}/logs/${logId}`);
   }
 
-  getDocumentAuditTrail(documentId: string, page = 0, pageSize = 50): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/logs/document/${documentId}`, {
+  getDocumentAuditTrail(documentId: string, page = 0, pageSize = 50): Observable<PageResponse<AuditLog> | AuditLog[]> {
+    return this.http.get<PageResponse<AuditLog> | AuditLog[]>(`${this.baseUrl}/logs/document/${documentId}`, {
       params: { page, pageSize },
     });
   }
 
-  getUserAuditTrail(userId: string, page = 0, pageSize = 50): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/logs/user/${userId}`, {
+  getUserAuditTrail(userId: string, page = 0, pageSize = 50): Observable<PageResponse<AuditLog> | AuditLog[]> {
+    return this.http.get<PageResponse<AuditLog> | AuditLog[]>(`${this.baseUrl}/logs/user/${userId}`, {
       params: { page, pageSize },
     });
   }
 
-  getStatistics(startTime?: string, endTime?: string): Observable<any> {
-    const params: any = {};
-    if (startTime) params.startTime = startTime;
-    if (endTime) params.endTime = endTime;
-    return this.http.get<any>(`${this.baseUrl}/statistics`, { params });
+  getStatistics(startTime?: string, endTime?: string): Observable<AuditStatistics> {
+    const params: Record<string, string> = {};
+    if (startTime) params['startTime'] = startTime;
+    if (endTime) params['endTime'] = endTime;
+    return this.http.get<AuditStatistics>(`${this.baseUrl}/statistics`, { params });
   }
 
   exportLogs(startTime?: string, endTime?: string, format: string = 'csv'): Observable<Blob> {
-    const params: any = { format };
-    if (startTime) params.startTime = startTime;
-    if (endTime) params.endTime = endTime;
+    const params: Record<string, string> = { format };
+    if (startTime) params['startTime'] = startTime;
+    if (endTime) params['endTime'] = endTime;
     return this.http.post(`${this.baseUrl}/export`, {}, { 
       params, 
       responseType: 'blob' 

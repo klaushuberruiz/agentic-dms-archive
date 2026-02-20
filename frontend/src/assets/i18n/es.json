@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "Sistema de gestion documental"
+  },
+  "common": {
+    "language": "Idioma",
+    "save": "Guardar",
+    "search": "Buscar",
+    "refresh": "Actualizar",
+    "user": "Usuario",
+    "none": "ninguno",
+    "from": "Desde",
+    "to": "Hasta",
+    "module": "Modulo",
+    "action": "Accion"
+  },
+  "unauthorized": {
+    "title": "No autorizado",
+    "message": "Debe iniciar sesion para acceder a esta area."
+  },
+  "documents": {
+    "list": {
+      "title": "Panel de documentos",
+      "subtitle": "Explore y administre sus documentos mas recientes.",
+      "uploadDocument": "Subir documento",
+      "loading": "Cargando documentos...",
+      "empty": "No se encontraron documentos.",
+      "version": "Version",
+      "size": "Tamano",
+      "bytes": "bytes",
+      "created": "Creado",
+      "errors": {
+        "loadFailed": "No se pudieron cargar los documentos del backend (error de API)."
+      }
+    },
+    "detail": {
+      "title": "Detalle del documento",
+      "id": "ID",
+      "version": "Version",
+      "createdBy": "Creado por",
+      "createdAt": "Creado el",
+      "saveMetadata": "Guardar metadatos",
+      "loading": "Cargando documento...",
+      "metadata": "Metadatos",
+      "versionHistory": "Historial de versiones",
+      "legalHoldStatus": "Estado de retencion legal",
+      "download": "Descargar",
+      "preview": "Vista previa",
+      "editMetadata": "Editar metadatos",
+      "uploadNewVersion": "Subir nueva version",
+      "softDelete": "Eliminacion logica",
+      "restore": "Restaurar"
+    },
+    "preview": {
+      "title": "Vista previa del documento",
+      "iframeTitle": "Vista previa PDF"
+    },
+    "upload": {
+      "title": "Subir documento",
+      "documentTypeId": "ID de tipo de documento",
+      "metadataJson": "JSON de metadatos",
+      "dropZone": "Arrastre y suelte el PDF aqui",
+      "selectedFile": "Seleccionado: {{fileName}}",
+      "submit": "Subir"
+    }
+  },
+  "search": {
+    "title": "Busqueda",
+    "searchText": "Texto de busqueda",
+    "bulkDownload": "Descarga masiva",
+    "documentType": "Tipo de documento",
+    "metadataKey": "Clave de metadato",
+    "metadataValue": "Valor de metadato",
+    "applyFilters": "Aplicar filtros"
+  },
+  "admin": {
+    "documentTypes": {
+      "title": "Tipos de documento",
+      "name": "Nombre",
+      "displayName": "Nombre para mostrar",
+      "jsonSchema": "Esquema JSON",
+      "retentionDays": "Dias de retencion",
+      "allowedGroups": "Grupos permitidos (separados por coma)"
+    },
+    "groups": {
+      "title": "Grupos",
+      "name": "Nombre",
+      "description": "Descripcion",
+      "parent": "Padre",
+      "createGroup": "Crear grupo"
+    },
+    "retention": {
+      "title": "Gestion de retencion",
+      "expiredDocuments": "Documentos vencidos",
+      "documentsWithActiveLegalHolds": "Documentos con retencion legal activa",
+      "runCleanup": "Ejecutar limpieza",
+      "upcomingExpiration": "Los documentos proximos a vencer se listaran aqui.",
+      "policyOverview": "Resumen de politicas de retencion por tipo de documento."
+    },
+    "auditLogs": {
+      "title": "Registros de auditoria",
+      "exportCsv": "Exportar CSV",
+      "exportJson": "Exportar JSON"
+    }
+  },
+  "legal": {
+    "holds": {
+      "title": "Retenciones legales",
+      "caseReference": "Referencia del caso",
+      "documentId": "ID de documento",
+      "reason": "Motivo",
+      "documentIds": "IDs de documentos (separados por coma)",
+      "placeHold": "Aplicar retencion",
+      "release": "Liberar",
+      "releaseHold": "Liberar retencion",
+      "bulkInfo": "Las operaciones masivas se admiten mediante la lista de IDs."
+    }
+  },
+  "governance": {
+    "versionHistory": {
+      "title": "Historial de versiones de requisitos",
+      "id": "ID",
+      "version": "Version",
+      "status": "Estado",
+      "modified": "Modificado",
+      "by": "Por",
+      "summary": "Resumen",
+      "exportCsv": "Exportar CSV"
+    },
+    "traceability": {
+      "title": "Panel de trazabilidad",
+      "approvalStatus": "Estado de aprobacion",
+      "missingOnly": "Solo sin implementacion",
+      "missing": "falta",
+      "exportCsv": "Exportar CSV"
+    },
+    "retrievalAudit": {
+      "title": "Panel de auditoria de recuperacion",
+      "requirementId": "ID de requisito",
+      "description": "Realiza seguimiento de frecuencia de recuperacion y eventos de auditoria.",
+      "rolesInfo": "Visible solo para compliance officer o administrador."
+    }
+  }
+}

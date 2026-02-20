@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -13,16 +12,16 @@ import java.util.List;
 @Slf4j
 public class EmbeddingService {
     
-    @Value("${azure.openai.endpoint}")
+    @Value("${azure.openai.endpoint:}")
     private String azureOpenAiEndpoint;
     
-    @Value("${azure.openai.api-key}")
+    @Value("${azure.openai.api-key:}")
     private String azureOpenAiKey;
     
-    @Value("${azure.openai.deployment-id}")
+    @Value("${azure.openai.deployment-id:text-embedding-ada-002}")
     private String deploymentId;
     
-    private final RestTemplate restTemplate;
+    
     
     public List<Double> generateEmbedding(String text) {
         if (text == null || text.isBlank()) {

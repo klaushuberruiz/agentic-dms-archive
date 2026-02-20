@@ -11,5 +11,7 @@ import java.util.UUID;
 public interface SearchIndexOutboxEventRepository extends JpaRepository<SearchIndexOutboxEvent, UUID> {
     List<SearchIndexOutboxEvent> findByProcessedAtIsNull();
     
-    List<SearchIndexOutboxEvent> findByDocumentIdAndProcessedAtIsNull(String documentId);
+    List<SearchIndexOutboxEvent> findByEntityIdAndProcessedAtIsNull(UUID entityId);
+
+    List<SearchIndexOutboxEvent> findByDeadLetteredTrueOrderByCreatedAtDesc();
 }

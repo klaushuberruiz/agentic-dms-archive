@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "Document Management System"
+  },
+  "common": {
+    "language": "Language",
+    "save": "Save",
+    "search": "Search",
+    "refresh": "Refresh",
+    "user": "User",
+    "none": "none",
+    "from": "From",
+    "to": "To",
+    "module": "Module",
+    "action": "Action"
+  },
+  "unauthorized": {
+    "title": "Unauthorized",
+    "message": "You must sign in to access this area."
+  },
+  "documents": {
+    "list": {
+      "title": "Document Dashboard",
+      "subtitle": "Browse and manage your latest documents.",
+      "uploadDocument": "Upload Document",
+      "loading": "Loading documents...",
+      "empty": "No documents found.",
+      "version": "Version",
+      "size": "Size",
+      "bytes": "bytes",
+      "created": "Created",
+      "errors": {
+        "loadFailed": "Could not load documents from backend (API error)."
+      }
+    },
+    "detail": {
+      "title": "Document Detail",
+      "id": "ID",
+      "version": "Version",
+      "createdBy": "Created By",
+      "createdAt": "Created At",
+      "saveMetadata": "Save Metadata",
+      "loading": "Loading document...",
+      "metadata": "Metadata",
+      "versionHistory": "Version history",
+      "legalHoldStatus": "Legal hold status",
+      "download": "Download",
+      "preview": "Preview",
+      "editMetadata": "Edit Metadata",
+      "uploadNewVersion": "Upload New Version",
+      "softDelete": "Soft Delete",
+      "restore": "Restore"
+    },
+    "preview": {
+      "title": "Document Preview",
+      "iframeTitle": "PDF preview"
+    },
+    "upload": {
+      "title": "Upload Document",
+      "documentTypeId": "Document Type ID",
+      "metadataJson": "Metadata JSON",
+      "dropZone": "Drag and drop PDF here",
+      "selectedFile": "Selected: {{fileName}}",
+      "submit": "Upload"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "searchText": "Search text",
+    "bulkDownload": "Bulk download",
+    "documentType": "Document type",
+    "metadataKey": "Metadata key",
+    "metadataValue": "Metadata value",
+    "applyFilters": "Apply filters"
+  },
+  "admin": {
+    "documentTypes": {
+      "title": "Document Types",
+      "name": "Name",
+      "displayName": "Display name",
+      "jsonSchema": "JSON schema",
+      "retentionDays": "Retention days",
+      "allowedGroups": "Allowed groups (comma separated)"
+    },
+    "groups": {
+      "title": "Groups",
+      "name": "Name",
+      "description": "Description",
+      "parent": "Parent",
+      "createGroup": "Create Group"
+    },
+    "retention": {
+      "title": "Retention Management",
+      "expiredDocuments": "Expired Documents",
+      "documentsWithActiveLegalHolds": "Documents With Active Legal Holds",
+      "runCleanup": "Run Cleanup",
+      "upcomingExpiration": "Documents approaching expiration will be listed here.",
+      "policyOverview": "Retention policy overview per document type."
+    },
+    "auditLogs": {
+      "title": "Audit Logs",
+      "exportCsv": "Export CSV",
+      "exportJson": "Export JSON"
+    }
+  },
+  "legal": {
+    "holds": {
+      "title": "Legal Holds",
+      "caseReference": "Case reference",
+      "documentId": "Document ID",
+      "reason": "Reason",
+      "documentIds": "Document IDs (comma separated)",
+      "placeHold": "Place Hold",
+      "release": "Release",
+      "releaseHold": "Release Hold",
+      "bulkInfo": "Bulk hold operations supported through document IDs list."
+    }
+  },
+  "governance": {
+    "versionHistory": {
+      "title": "Requirement Version History",
+      "id": "ID",
+      "version": "Version",
+      "status": "Status",
+      "modified": "Modified",
+      "by": "By",
+      "summary": "Summary",
+      "exportCsv": "Export CSV"
+    },
+    "traceability": {
+      "title": "Traceability Dashboard",
+      "approvalStatus": "Approval status",
+      "missingOnly": "Missing implementation only",
+      "missing": "missing",
+      "exportCsv": "Export CSV"
+    },
+    "retrievalAudit": {
+      "title": "Retrieval Audit Dashboard",
+      "requirementId": "Requirement ID",
+      "description": "Tracks requirement retrieval frequency and audit events.",
+      "rolesInfo": "Visible only to compliance officer or administrator roles."
+    }
+  }
+}
