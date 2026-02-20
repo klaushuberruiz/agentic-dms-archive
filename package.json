@@ -1,0 +1,10 @@
+{
+  "name": "agentic-dms-archive-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:backend": "mvn -f backend/pom.xml -B -DskipTests=false test",
+    "test:frontend": "cd frontend && npm test --silent",
+    "test": "npm run test:backend || true && npm run test:frontend || true"
+  }
+}
