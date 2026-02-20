@@ -14,4 +14,10 @@ public abstract class DmsException extends RuntimeException {
         this.errorCode = errorCode;
         this.httpStatus = httpStatus;
     }
+
+    protected DmsException(String errorCode, HttpStatus httpStatus, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+        this.httpStatus = httpStatus;
+    }
 }

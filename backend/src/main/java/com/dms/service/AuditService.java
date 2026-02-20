@@ -4,6 +4,7 @@ import com.dms.domain.AuditLog;
 import com.dms.domain.Document;
 import com.dms.dto.response.AuditLogResponse;
 import com.dms.repository.AuditLogRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,20 +27,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AuditService {
-    
+
+    private static final String CORRELATION_HEADER = "X-Correlation-ID";
+
     private final AuditLogRepository auditLogRepository;
     private final TenantContext tenantContext;
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logDocumentUpload(Document document) {
         Map<String, Object> details = new HashMap<>();
         details.put("documentType", document.getDocumentType().getName());
         details.put("version", document.getCurrentVersion());
         details.put("fileSize", document.getFileSizeBytes());
-        
+
         createAuditLog("UPLOAD", "DOCUMENT", document.getId(), details);
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logDocumentDownload(UUID documentId) {
         createAuditLog("DOWNLOAD", "DOCUMENT", documentId, Map.of());
@@ -56,34 +63,55 @@ public class AuditService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logSoftDelete(UUID documentId, String reason) {
-        createAuditLog("SOFT_DELETE", "DOCUMENT", documentId, Map.of("reason", reason));
+        createAuditLog("SOFT_DELETE", "DOCUMENT", documentId, Map.of("reason", reason == null ? "" : reason));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logHardDelete(UUID documentId, String reason, int deletedVersions) {
+        createAuditLog("HARD_DELETE", "DOCUMENT", documentId, Map.of(
+            "reason", reason == null ? "" : reason,
+            "deletedVersionCount", deletedVersions));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logRestore(UUID documentId, String restoredBy) {
         createAuditLog("RESTORE", "DOCUMENT", documentId, Map.of("restoredBy", restoredBy));
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logSearch(String query, int resultCount) {
         Map<String, Object> details = new HashMap<>();
         details.put("query", query);
         details.put("resultCount", resultCount);
-        createAuditLog("SEARCH", "DOCUMENT", null, details);
+        createAuditLog("SEARCH", "SEARCH", UUID.randomUUID(), details);
     }
-    
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logAuthenticationEvent(String outcome, String subject, String provider) {
+        Map<String, Object> details = new HashMap<>();
+        details.put("subject", subject == null ? "unknown" : subject);
+        details.put("provider", provider == null ? "unknown" : provider);
+        createAuditLog("AUTH_" + outcome, "AUTH", UUID.randomUUID(), details);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logMcpEvent(String action, Map<String, Object> details) {
+        createAuditLog(action, "MCP", UUID.randomUUID(), details == null ? Map.of() : details);
+    }
+
     private void createAuditLog(String action, String entityType, UUID entityId, Map<String, Object> details) {
         AuditLog auditLog = AuditLog.builder()
             .tenantId(tenantContext.getCurrentTenantId())
-            .correlationId(UUID.randomUUID())
+            .correlationId(resolveCorrelationId())
             .action(action)
             .entityType(entityType)
-            .entityId(entityId)
+            .entityId(entityId == null ? UUID.randomUUID() : entityId)
             .userId(tenantContext.getCurrentUserId())
+            .clientIp(resolveClientIp())
             .timestamp(Instant.now())
-            .details(details)
+            .details(details == null ? Map.of() : details)
             .build();
-        
+
         auditLogRepository.save(auditLog);
         log.info("Audit log created: {} on {} {}", action, entityType, entityId);
     }
@@ -139,6 +167,38 @@ public class AuditService {
                 item.getEntityId() == null ? "" : item.getEntityId().toString()))
             .collect(Collectors.joining("\n"));
         return header + rows;
+    }
+
+    private UUID resolveCorrelationId() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return UUID.randomUUID();
+        }
+        HttpServletRequest request = attributes.getRequest();
+        String correlationId = request.getHeader(CORRELATION_HEADER);
+        if (correlationId == null || correlationId.isBlank()) {
+            return UUID.randomUUID();
+        }
+        try {
+            return UUID.fromString(correlationId);
+        } catch (IllegalArgumentException ex) {
+            return UUID.randomUUID();
+        }
+    }
+
+    private InetAddress resolveClientIp() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return null;
+        }
+        HttpServletRequest request = attributes.getRequest();
+        String forwarded = request.getHeader("X-Forwarded-For");
+        String ip = (forwarded == null || forwarded.isBlank()) ? request.getRemoteAddr() : forwarded.split(",")[0].trim();
+        try {
+            return ip == null || ip.isBlank() ? null : InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            return null;
+        }
     }
 
     private String sanitizeCsv(String value) {

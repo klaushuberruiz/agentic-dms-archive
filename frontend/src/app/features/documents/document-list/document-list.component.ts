@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DocumentService } from '../../../services/document.service';
 import { Document } from '../../../models/document.model';
+import { DocumentCardComponent } from '../../../shared/components/document-card/document-card.component';
 
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule],
+  imports: [CommonModule, RouterLink, TranslateModule, DocumentCardComponent],
   template: `
     <section class="dashboard">
       <header class="dashboard-header">
@@ -30,12 +31,7 @@ import { Document } from '../../../models/document.model';
       } @else {
         <div class="cards">
           @for (doc of documents(); track doc.id) {
-            <article class="card">
-              <h3>{{ doc.id }}</h3>
-              <p><strong>{{ 'documents.list.version' | translate }}:</strong> {{ doc.currentVersion }}</p>
-              <p><strong>{{ 'documents.list.size' | translate }}:</strong> {{ doc.fileSizeBytes }} {{ 'documents.list.bytes' | translate }}</p>
-              <p><strong>{{ 'documents.list.created' | translate }}:</strong> {{ doc.createdAt | date: 'medium' }}</p>
-            </article>
+            <app-document-card [document]="doc" />
           }
         </div>
       }
@@ -84,20 +80,6 @@ import { Document } from '../../../models/document.model';
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 0.9rem;
-      }
-      .card {
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 0.9rem;
-        background: #fff;
-      }
-      .card h3 {
-        margin: 0 0 0.5rem 0;
-        font-size: 0.95rem;
-        word-break: break-all;
-      }
-      .card p {
-        margin: 0.2rem 0;
       }
     `,
   ],

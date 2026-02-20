@@ -10,6 +10,8 @@ import java.util.UUID;
 @Repository
 public interface SearchIndexOutboxEventRepository extends JpaRepository<SearchIndexOutboxEvent, UUID> {
     List<SearchIndexOutboxEvent> findByProcessedAtIsNull();
+
+    List<SearchIndexOutboxEvent> findByProcessedAtIsNullAndDeadLetteredFalseOrderByCreatedAtAsc();
     
     List<SearchIndexOutboxEvent> findByEntityIdAndProcessedAtIsNull(UUID entityId);
 

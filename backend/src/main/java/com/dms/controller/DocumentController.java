@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpRange;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.Comparator;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -61,14 +65,30 @@ public class DocumentController {
 
 	@PreAuthorize("hasRole('DOCUMENT_USER')")
 	@GetMapping("/{id}/download")
-	public ResponseEntity<InputStreamResource> download(@PathVariable UUID id) {
+	public ResponseEntity<?> download(@PathVariable UUID id, @RequestHeader(value = HttpHeaders.RANGE, required = false) String range) {
 		DocumentResponse meta = documentService.getDocument(id);
-		InputStream is = documentService.downloadDocument(id);
-		InputStreamResource resource = new InputStreamResource(is);
+		long fileSize = meta.getFileSizeBytes() != null ? meta.getFileSizeBytes() : 0;
+		if (range != null && !range.isBlank() && fileSize > 0) {
+			List<HttpRange> ranges = HttpRange.parseRanges(range);
+			if (!ranges.isEmpty()) {
+				HttpRange first = ranges.get(0);
+				long start = first.getRangeStart(fileSize);
+				long end = first.getRangeEnd(fileSize);
+				byte[] bytes = documentService.downloadDocumentRange(id, start, end);
+				return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+					.header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
+					.header(HttpHeaders.ACCEPT_RANGES, "bytes")
+					.contentLength(bytes.length)
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(bytes);
+			}
+		}
+		InputStreamResource resource = new InputStreamResource(documentService.downloadDocument(id));
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + id + ".pdf\"")
-			.contentLength(meta.getFileSizeBytes() != null ? meta.getFileSizeBytes() : 0)
+			.header(HttpHeaders.ACCEPT_RANGES, "bytes")
+			.contentLength(fileSize)
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(resource);
 	}
@@ -85,6 +105,12 @@ public class DocumentController {
 			.contentLength(meta.getFileSizeBytes() != null ? meta.getFileSizeBytes() : 0)
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(resource);
+	}
+
+	@PreAuthorize("hasRole('DOCUMENT_USER')")
+	@GetMapping("/{id}/download-url")
+	public ResponseEntity<Map<String, String>> getDownloadUrl(@PathVariable UUID id) {
+		return ResponseEntity.ok(Map.of("url", documentService.generateDownloadUrl(id)));
 	}
 
 	@PutMapping("/{id}/metadata")
@@ -149,6 +175,13 @@ public class DocumentController {
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(new InputStreamResource(is));
+	}
+
+	@PreAuthorize("hasRole('DOCUMENT_USER')")
+	@PostMapping("/{id}/versions/{version}/restore")
+	public ResponseEntity<Void> restoreVersion(@PathVariable UUID id, @PathVariable int version) {
+		versioningService.restoreVersion(id, version);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasRole('DOCUMENT_USER')")

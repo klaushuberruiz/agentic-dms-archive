@@ -2,7 +2,9 @@ package com.dms.controller;
 
 import com.dms.domain.SearchIndexOutboxEvent;
 import com.dms.dto.response.AdminStatusResponse;
+import com.dms.indexing.IndexDriftService;
 import com.dms.service.RetentionService;
+import com.dms.service.HybridSearchService;
 import com.dms.repository.SearchIndexOutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ public class AdminController {
 
     private final RetentionService retentionService;
     private final SearchIndexOutboxEventRepository outboxRepository;
+    private final IndexDriftService indexDriftService;
+    private final HybridSearchService hybridSearchService;
 
     @GetMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
@@ -73,5 +77,34 @@ public class AdminController {
         event.setNextRetryAt(Instant.now());
         outboxRepository.save(event);
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/index/drift")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Integer>> indexDrift() {
+        return ResponseEntity.ok(indexDriftService.analyzeDrift());
+    }
+
+    @PostMapping("/index/reconcile")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Integer>> reconcileIndexDrift() {
+        return ResponseEntity.ok(indexDriftService.reconcileDrift());
+    }
+
+    @PostMapping("/cache/hybrid-search/evict")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> evictHybridSearchCache() {
+        hybridSearchService.evictCache();
+        return ResponseEntity.accepted().body(Map.of("status", "evicted"));
+    }
+
+    @GetMapping("/metrics/summary")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> metricsSummary() {
+        Map<String, Integer> drift = indexDriftService.analyzeDrift();
+        return ResponseEntity.ok(Map.of(
+            "outboxPending", outboxRepository.findByProcessedAtIsNull().size(),
+            "outboxDeadLetters", outboxRepository.findByDeadLetteredTrueOrderByCreatedAtDesc().size(),
+            "indexDrift", drift));
     }
 }

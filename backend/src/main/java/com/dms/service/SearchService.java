@@ -51,26 +51,23 @@ public class SearchService {
         int pageSize = validatePageSize(pageable.getPageSize());
         Pageable validatedPageable = Pageable.ofSize(pageSize).withPage(pageable.getPageNumber());
         
-        List<Document> results;
+        Page<Document> page;
         
         if (documentTypeId != null) {
             // Type-specific search
-            results = documentRepository.findByTenantIdAndDocumentTypeId(tenantId, documentTypeId, validatedPageable)
-                .getContent();
+            page = documentRepository.findByTenantIdAndDocumentTypeId(tenantId, documentTypeId, validatedPageable);
         } else if (query != null && !query.isBlank()) {
-            results = documentRepository.searchFullText(tenantId, query, validatedPageable).getContent();
+            page = documentRepository.searchFullText(tenantId, query, validatedPageable);
         } else if (startDate != null && endDate != null) {
             // Date range search
-            results = documentRepository.findByTenantIdAndDateRange(tenantId, startDate, endDate, validatedPageable)
-                .getContent();
+            page = documentRepository.findByTenantIdAndDateRange(tenantId, startDate, endDate, validatedPageable);
         } else {
             // General search - all active documents
-            results = documentRepository.findByTenantIdAndDeletedAtIsNull(tenantId, validatedPageable)
-                .getContent();
+            page = documentRepository.findByTenantIdAndDeletedAtIsNull(tenantId, validatedPageable);
         }
         
         // Apply RBAC filtering - try access, filter out unauthorized ones
-        results = results.stream()
+        List<Document> results = page.getContent().stream()
             .filter(doc -> {
                 try {
                     authorizationService.assertCanAccessDocument(doc);
@@ -79,7 +76,7 @@ public class SearchService {
                     return false;
                 }
             })
-            .collect(Collectors.toList());
+            .toList();
         
         // Convert to response format
         List<Map<String, Object>> responseList = results.stream()
@@ -91,7 +88,7 @@ public class SearchService {
         
         log.info("Search executed: query={}, results={}, userId={}", query, responseList.size(), userId);
         
-        return new PageImpl<>(responseList, validatedPageable, responseList.size());
+        return new PageImpl<>(responseList, validatedPageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)

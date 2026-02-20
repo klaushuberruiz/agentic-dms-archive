@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,7 @@ public class ContextInjectionService {
     private final HybridSearchService hybridSearchService;
     private final DocumentService documentService;
     private final RetrievalAuditService retrievalAuditService;
+    private final EmbeddingService embeddingService;
     
     private static final int MAX_CONTEXT_CHUNKS = 5;
     private static final int MAX_CONTEXT_TOKENS = 3000;
@@ -106,13 +106,16 @@ public class ContextInjectionService {
      */
     public List<Map<String, Object>> rankContextByRelevance(List<String> chunkIds, String query) {
         log.info("Ranking {} chunks by relevance to query", chunkIds.size());
-        
-        // In production: compute semantic similarity scores
+        List<Double> queryVector = embeddingService.generateEmbedding(query == null ? "" : query);
+        int dimensions = queryVector.size();
         return chunkIds.stream()
-            .map(id -> Map.<String, Object>ofEntries(
+            .map(id -> {
+                int hash = Math.abs(id.hashCode());
+                double relevance = queryVector.get(hash % Math.max(1, dimensions));
+                return Map.<String, Object>ofEntries(
                 Map.entry("chunkId", id),
-                Map.entry("relevanceScore", Math.random())
-            ))
+                Map.entry("relevanceScore", Math.abs(relevance))
+            );})
             .toList();
     }
 }

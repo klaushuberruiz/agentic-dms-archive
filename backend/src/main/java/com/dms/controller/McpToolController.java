@@ -5,6 +5,7 @@ import com.dms.dto.request.GetRequirementRequest;
 import com.dms.dto.request.RelatedRequirementsRequest;
 import com.dms.dto.request.SearchDocumentsRequest;
 import com.dms.dto.request.SearchRequirementsRequest;
+import com.dms.dto.request.ValidateRequirementReferencesRequest;
 import com.dms.mcp.McpToolHandler;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,12 @@ public class McpToolController {
             request.getLimit()
         );
         return ResponseEntity.ok(results);
+    }
+
+    @PostMapping("/validate_requirement_references")
+    @PreAuthorize("hasRole('DOCUMENT_USER')")
+    public ResponseEntity<Map<String, Object>> validateRequirementReferences(
+        @Valid @RequestBody ValidateRequirementReferencesRequest request) {
+        return ResponseEntity.ok(mcpToolHandler.validateRequirementReferences(request.getChunkIds()));
     }
 }

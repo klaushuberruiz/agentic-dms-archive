@@ -17,6 +17,8 @@ import java.util.UUID;
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
     
     Optional<Document> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    Optional<Document> findByTenantIdAndIdempotencyKey(UUID tenantId, String idempotencyKey);
     
     Page<Document> findByTenantIdAndDeletedAtIsNull(UUID tenantId, Pageable pageable);
     

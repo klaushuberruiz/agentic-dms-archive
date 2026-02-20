@@ -8,6 +8,7 @@ import com.dms.exception.ValidationException;
 import com.dms.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,15 @@ public class RetentionService {
     private final LegalHoldService legalHoldService;
     private final TenantContext tenantContext;
     private final AuditService auditService;
+
+    @Value("${dms.retention.minimum-days:0}")
+    private int globalMinimumRetentionDays;
+
+    @Value("${dms.retention.warning-window-days:30}")
+    private int warningWindowDays;
+
+    @Value("${dms.retention.tenant-overrides:}")
+    private String tenantOverrides;
     
     @Transactional
     public void markForDeletion(UUID documentId, Integer retentionDays) {
@@ -48,6 +58,11 @@ public class RetentionService {
         }
         if (retentionDays > 36500) { // ~100 years
             throw new ValidationException("Retention days cannot exceed 36500 (100 years)");
+        }
+
+        int minDays = resolveMinRetentionDays(tenantId, document.getDocumentType());
+        if (retentionDays < minDays) {
+            throw new ValidationException("Retention days must be at least " + minDays);
         }
         
         // Calculate expiry
@@ -135,6 +150,17 @@ public class RetentionService {
                     log.error("Failed to hard delete expired document: {}", document.getId(), e);
                 }
             }
+
+            List<Document> warningCandidates = documentRepository.findByTenantIdAndDeletedAtIsNull(tenantId).stream()
+                .filter(d -> d.getRetentionExpiresAt() != null)
+                .filter(d -> {
+                    long daysUntil = ChronoUnit.DAYS.between(now, d.getRetentionExpiresAt());
+                    return daysUntil >= 0 && daysUntil <= warningWindowDays;
+                })
+                .toList();
+            if (!warningCandidates.isEmpty()) {
+                log.info("Retention warning window hit for {} documents ({} days)", warningCandidates.size(), warningWindowDays);
+            }
             
             log.info("Retention cleanup job completed");
         } catch (Exception e) {
@@ -155,5 +181,34 @@ public class RetentionService {
         return allDocuments.stream()
             .filter(d -> legalHoldService.hasActiveLegalHolds(d.getId()))
             .count();
+    }
+
+    private int resolveMinRetentionDays(UUID tenantId, DocumentType docType) {
+        int minFromType = docType.getMinRetentionDays() == null ? 0 : docType.getMinRetentionDays();
+        int minFromGlobal = Math.max(0, globalMinimumRetentionDays);
+        int minFromTenantOverride = parseTenantOverride(tenantId).orElse(0);
+        return Math.max(minFromType, Math.max(minFromGlobal, minFromTenantOverride));
+    }
+
+    private java.util.Optional<Integer> parseTenantOverride(UUID tenantId) {
+        if (tenantOverrides == null || tenantOverrides.isBlank()) {
+            return java.util.Optional.empty();
+        }
+        String[] entries = tenantOverrides.split(",");
+        for (String entry : entries) {
+            String[] parts = entry.trim().split(":");
+            if (parts.length != 2) {
+                continue;
+            }
+            if (!tenantId.toString().equalsIgnoreCase(parts[0].trim())) {
+                continue;
+            }
+            try {
+                return java.util.Optional.of(Integer.parseInt(parts[1].trim()));
+            } catch (NumberFormatException ignored) {
+                return java.util.Optional.empty();
+            }
+        }
+        return java.util.Optional.empty();
     }
 }

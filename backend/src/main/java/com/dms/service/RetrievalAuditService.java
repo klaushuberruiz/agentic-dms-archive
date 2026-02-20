@@ -34,7 +34,8 @@ public class RetrievalAuditService {
                 Map.entry("userId", userId)
             );
             
-            log.debug("Logged context retrieval: sessionId={}, chunks={}, tokens={}", 
+            auditService.logMcpEvent("MCP_CONTEXT_RETRIEVAL", metadata);
+            log.debug("Logged context retrieval: sessionId={}, chunks={}, tokens={}",
                 sessionId, chunkCount, totalTokens);
         } catch (Exception e) {
             log.error("Failed to log context retrieval", e);
@@ -56,7 +57,8 @@ public class RetrievalAuditService {
                 Map.entry("timestamp", Instant.now().toString())
             );
             
-            log.debug("Logged MCP tool call: tool={}, executionTime={}ms", 
+            auditService.logMcpEvent("MCP_TOOL_CALL", metadata);
+            log.debug("Logged MCP tool call: tool={}, executionTime={}ms",
                 toolName, executionTimeMs);
         } catch (Exception e) {
             log.error("Failed to log MCP tool call", e);
@@ -79,7 +81,8 @@ public class RetrievalAuditService {
                 Map.entry("timestamp", Instant.now().toString())
             );
             
-            log.debug("Logged model response: sessionId={}, sources={}", 
+            auditService.logMcpEvent("MCP_MODEL_RESPONSE", metadata);
+            log.debug("Logged model response: sessionId={}, sources={}",
                 sessionId, sourcedDocuments.size());
         } catch (Exception e) {
             log.error("Failed to log model response", e);
